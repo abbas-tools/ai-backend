@@ -1,92 +1,95 @@
 import os
 import uuid
-from flask import Flask, request, jsonify, render_template, abort, session, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, session, send_from_directory, abort
 
 app = Flask(__name__)
-app.secret_key = "abbas_super_secret_key_king5656"
+app.secret_key = 'ahb_secure_secret_key_xyz'
 
 UPLOAD_FOLDER = 'uploads'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-# In-memory storage for site customizations (Admin control)
-site_config = {
-    "site_title": "AHB FILE HUB",
-    "theme_glow": "#4facfe"
-}
+# In-memory storage for file metadata (Use database for production persistence)
+files_db = {}
 
-# --- HOME / UPLOAD PAGE ---
+ADMIN_USER = "admin"
+ADMIN_PASS = "ahb123"
+
 @app.route('/')
 def index():
-    return render_template('index.html', config=site_config)
+    # Main page par public upload nahi hoga, yahan aap chahein toh landing text ya general hub dikha sakte hain
+    return render_template('index.html')
 
-# --- XML UPLOAD ENDPOINT ---
-@app.route('/upload-xml', methods=['POST'])
-def upload_xml():
-    if 'xml_file' not in request.files:
-        return jsonify({'error': 'No file part'}), 400
-    
-    file = request.files['xml_file']
-    if file.filename == '':
-        return jsonify({'error': 'No selected file'}), 400
-    
-    if file and file.filename.endswith('.xml'):
-        file_id = uuid.uuid4().hex
-        filename = f"{file_id}_{file.filename}"
-        filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-        file.save(filepath)
-        
-        share_url = request.host_url + f"view/{file_id}"
-        return jsonify({'success': True, 'share_url': share_url})
-    
-    return jsonify({'error': 'Only .xml files are allowed'}), 400
+@app.route('/file/<file_id>')
+def viewer_page(file_id):
+    if file_id not in files_db:
+        abort(404)
+    file_info = files_db[file_id]
+    return render_template('viewer.html', file_info=file_info, file_id=file_id)
 
-# --- SECURE ISOLATED VIEWER PAGE (With Smart Link & Banner Ads) ---
-@app.route('/view/<file_id>')
-def view_xml(file_id):
-    for filename in os.listdir(app.config['UPLOAD_FOLDER']):
-        if filename.startswith(file_id):
-            filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            with open(filepath, 'r', encoding='utf-8', errors='ignore') as f:
-                content = f.read()
-            
-            original_name = filename.split('_', 1)[1]
-            return render_template('viewer.html', content=content, filename=original_name, config=site_config)
-            
-    return abort(404, description="XML file not found or link expired.")
+@app.route('/download-ad/<file_id>')
+def download_ad(file_id):
+    if file_id not in files_db:
+        abort(404)
+    file_info = files_db[file_id]
+    return render_template('ad_download.html', file_info=file_info, file_id=file_id)
 
-# --- ADMIN PANEL LOGIN ---
-@app.route('/admin/login', methods=['GET', 'POST'])
+@app.route('/download/<file_id>')
+def download_file(file_id):
+    if file_id not in files_db:
+        abort(404)
+    file_info = files_db[file_id]
+    return send_from_directory(app.config['UPLOAD_FOLDER'], file_info['stored_name'], as_attachment=True)
+
+@app.route('/admin-login', methods=['GET', 'POST'])
 def admin_login():
-    error = None
     if request.method == 'POST':
+        username = request.form.get('username')
         password = request.form.get('password')
-        if password == 'KING5656':
+        if username == ADMIN_USER and password == ADMIN_PASS:
             session['admin_logged'] = True
-            return redirect(url_for('admin_dashboard'))
-        else:
-            error = 'Wrong Password! Access Denied.'
-    return render_template('admin_login.html', error=error)
+            return redirect(url_for('admin_panel'))
+    return render_template('admin_login.html')
 
-# --- ADMIN DASHBOARD & CUSTOMIZATION ---
-@app.route('/admin', methods=['GET', 'POST'])
-def admin_dashboard():
+@app.route('/admin-panel', methods=['GET', 'POST'])
+def admin_panel():
     if not session.get('admin_logged'):
         return redirect(url_for('admin_login'))
     
     if request.method == 'POST':
-        site_config['site_title'] = request.form.get('site_title', 'AHB FILE HUB')
-        site_config['theme_glow'] = request.form.get('theme_glow', '#4facfe')
-        return redirect(url_for('admin_dashboard'))
-    
-    # List all uploaded files for admin overview
-    files = os.listdir(app.config['UPLOAD_FOLDER'])
-    return render_template('admin.html', config=site_config, files=files)
+        if 'file' in request.files:
+            file = request.files['file']
+            if file.filename != '':
+                file_id = str(uuid.uuid4())[:8]
+                filename = file.filename
+                file_path = os.path.join(app.config['UPLOAD_FOLDER'], f"{file_id}_{filename}")
+                file.save(file_path)
+                
+                files_db[file_id] = {
+                    'filename': filename,
+                    'stored_name': f"{file_id}_{filename}"
+                }
+                return redirect(url_for('admin_panel'))
 
-@app.route('/admin/logout')
-def admin_logout():
+    return render_template('admin.html', files=files_db)
+
+@app.route('/admin/delete/<file_id>')
+def delete_file(file_id):
+    if not session.get('admin_logged'):
+        return redirect(url_for('admin_login'))
+    if file_id in files_db:
+        try:
+            os.remove(os.path.join(app.config['UPLOAD_FOLDER'], files_db[file_id]['stored_name']))
+        except:
+            pass
+        del files_db[file_id]
+    return redirect(url_for('admin_panel'))
+
+@app.route('/logout')
+def logout():
     session.pop('admin_logged', None)
-    return redirect(url_for('admin_login'))
+    return redirect(url_for('index'))
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(debug=True)
+    
