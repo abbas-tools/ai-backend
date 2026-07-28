@@ -1,58 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AHB FILE HUB - Admin Dashboard</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-    body { background: #08080e; color: #f0f4ff; padding: 30px; display: flex; justify-content: center; min-height: 100vh; }
-    .container { width: 100%; max-width: 850px; background: rgba(16, 20, 36, 0.9); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 24px; padding: 30px; box-shadow: 0 20px 48px rgba(0,0,0,0.8); }
-    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 15px; }
-    h2 { color: #a0e9ff; font-size: 1.6rem; }
-    .logout { color: #ff6b6b; text-decoration: none; font-size: 0.9rem; }
-    .section { margin-bottom: 25px; background: rgba(0,0,0,0.3); padding: 20px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.04); }
-    .section h3 { color: #7ab3ff; margin-bottom: 12px; font-size: 1.1rem; }
-    label { display: block; font-size: 0.85rem; color: #99aacb; margin-bottom: 6px; }
-    input { width: 100%; padding: 12px; background: #000; border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; color: #fff; margin-bottom: 12px; }
-    button { padding: 12px 20px; border: none; border-radius: 10px; background: linear-gradient(135deg, #3b82f6, #8b5cf6); color: white; font-weight: 600; cursor: pointer; }
-    ul { list-style: none; max-height: 150px; overflow-y: auto; background: #000; padding: 10px; border-radius: 10px; }
-    li { padding: 8px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.85rem; color: #a0e9ff; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - AHB File Hub</title>
+    <style>
+        body { background: #0b0f19; color: #fff; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 20px; margin: 0; }
+        .container { max-width: 650px; margin: 0 auto; background: #131b2e; border: 1px solid #1e293b; padding: 25px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #1e293b; padding-bottom: 15px; margin-bottom: 20px; }
+        h2 { color: #38bdf8; font-size: 20px; margin: 0; }
+        .logout { color: #f43f5e; text-decoration: none; font-size: 13px; font-weight: bold; }
+        .upload-section { background: #0f172a; border: 2px dashed #38bdf8; padding: 20px; border-radius: 10px; text-align: center; margin-bottom: 25px; }
+        .btn { background: linear-gradient(135deg, #0ea5e9, #6366f1); color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .file-card { background: #0f172a; border: 1px solid #1e293b; padding: 15px; border-radius: 8px; margin-bottom: 12px; }
+        .file-title { font-size: 14px; font-weight: bold; color: #cbd5e1; margin-bottom: 8px; }
+        .link-box { background: #131b2e; padding: 8px; border-radius: 6px; font-size: 12px; color: #38bdf8; word-break: break-all; margin-bottom: 8px; border: 1px solid #334155; }
+        .actions { display: flex; justify-content: space-between; align-items: center; }
+        .btn-sm { padding: 5px 10px; border-radius: 5px; font-size: 11px; text-decoration: none; font-weight: bold; }
+        .btn-copy { background: #334155; color: white; border: none; cursor: pointer; }
+        .btn-del { background: #ef4444; color: white; }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <div class="header">
-      <h2>👑 AHB FILE HUB ADMIN</h2>
-      <a href="/admin/logout" class="logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
-    </div>
+    <div class="container">
+        <div class="header">
+            <h2>👑 Admin File Hub Manager</h2>
+            <a href="/logout" class="logout">Logout</a>
+        </div>
 
-    <div class="section">
-      <h3>🎨 Site Customization</h3>
-      <form method="POST">
-        <label>Site Title:</label>
-        <input type="text" name="site_title" value="{{ config.site_title }}" required>
-        
-        <label>Theme Glow Color (Hex Code):</label>
-        <input type="text" name="theme_glow" value="{{ config.theme_glow }}" required>
-        
-        <button type="submit"><i class="fas fa-save"></i> Save Changes</button>
-      </form>
-    </div>
+        <!-- Upload Form -->
+        <form method="POST" enctype="multipart/form-data" class="upload-section">
+            <p style="margin-top:0; font-size: 14px; color: #94a3b8;">Upload a new file to generate an isolated shareable link:</p>
+            <input type="file" name="file" required style="color: #cbd5e1; font-size: 13px;"><br>
+            <button type="submit" class="btn">Upload & Generate Link</button>
+        </form>
 
-    <div class="section">
-      <h3>📂 Uploaded XML Files Storage Overview</h3>
-      <ul>
+        <h3 style="font-size: 16px; color: #38bdf8; margin-bottom: 15px;">Generated Unique Links:</h3>
+
         {% if files %}
-          {% for file in files %}
-            <li><i class="fas fa-file-code"></i> {{ file }}</li>
-          {% endfor %}
+            {% for file_id, info in files.items() %}
+            <div class="file-card">
+                <div class="file-title">📄 {{ info.filename }}</div>
+                <div class="link-box" id="link-{{ file_id }}">https://ahb-files-hub.onrender.com/file/{{ file_id }}</div>
+                <div class="actions">
+                    <button class="btn-sm btn-copy" onclick="copyText('link-{{ file_id }}')">📋 Copy Link for Social Media</button>
+                    <a href="/admin/delete/{{ file_id }}" class="btn-sm btn-del">Delete</a>
+                </div>
+            </div>
+            {% endfor %}
         {% else %}
-          <li style="color:#666;">No XML files uploaded yet.</li>
+            <p style="text-align: center; color: #64748b; font-size: 13px;">No files uploaded yet.</p>
         {% endif %}
-      </ul>
     </div>
-  </div>
+
+    <script>
+        function copyText(containerId) {
+            const text = document.getElementById(containerId).innerText;
+            navigator.clipboard.writeText(text);
+            alert('Isolated link copied! You can now paste it in your YouTube/TikTok/Instagram bio or description.');
+        }
+    </script>
 </body>
 </html>
