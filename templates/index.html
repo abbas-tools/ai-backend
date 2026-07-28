@@ -1,106 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{{ config.site_title }}</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-    body { background: #08080e; color: #f0f4ff; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
-    .container { width: 100%; max-width: 650px; background: rgba(16, 20, 36, 0.85); backdrop-filter: blur(14px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 28px; padding: 36px; box-shadow: 0 20px 48px -12px rgba(0, 0, 0, 0.8); }
-    h1 { font-size: 2.2rem; font-weight: 700; background: linear-gradient(135deg, #a0e9ff 0%, {{ config.theme_glow }} 40%, #b57cff 80%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; text-align: center; }
-    .subtitle { text-align: center; color: #99aacb; font-size: 0.95rem; margin-bottom: 24px; }
-    
-    /* Ad Box Container with Strict Sandboxing & Tamper Protection */
-    .ad-container { display: flex; justify-content: center; margin: 15px 0; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.04); }
-
-    .upload-zone { border: 2px dashed rgba(79, 172, 254, 0.35); border-radius: 20px; padding: 30px 20px; text-align: center; background: rgba(255, 255, 255, 0.02); cursor: pointer; transition: 0.3s; margin-bottom: 20px; }
-    .upload-zone:hover { background: rgba(79, 172, 254, 0.05); border-color: #4facfe; }
-    .upload-zone i { font-size: 2.8rem; color: #4facfe; margin-bottom: 10px; }
-    .btn-primary { width: 100%; padding: 16px; border: none; border-radius: 50px; background: linear-gradient(135deg, #3b82f6, #8b5cf6); color: white; font-weight: 600; font-size: 1.05rem; cursor: pointer; box-shadow: 0 8px 24px rgba(59, 130, 246, 0.35); }
-    .result-box { margin-top: 20px; background: rgba(0, 0, 0, 0.5); padding: 16px; border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.06); display: none; word-break: break-all; }
-    .result-box a { color: #a0e9ff; text-decoration: none; font-size: 0.95rem; }
-    .admin-link { display: block; text-align: center; margin-top: 20px; color: #6b8cff; font-size: 0.85rem; text-decoration: none; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AHB File Hub - Downloads</title>
+    <style>
+        body { background: #0b0f19; color: #fff; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .card { background: #131b2e; border: 1px solid #1e293b; padding: 30px; border-radius: 16px; width: 380px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .logo { font-size: 40px; margin-bottom: 5px; }
+        h1 { font-size: 22px; margin-bottom: 8px; color: #38bdf8; }
+        p { font-size: 13px; color: #94a3b8; margin-bottom: 20px; }
+        .admin-link { display: block; margin-top: 20px; font-size: 12px; color: #64748b; text-decoration: none; }
+        .admin-link:hover { color: #38bdf8; }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <h1>✦ {{ config.site_title }}</h1>
-    <p class="subtitle">Upload XML file to instantly generate an isolated private link.</p>
-    
-    <!-- Top Secure Banner Ad 1 (320x50) wrapped in Sandbox Iframe -->
-    <div class="ad-container">
-      <iframe sandbox="allow-scripts allow-same-origin" style="border:none; width:320px; height:50px; overflow:hidden;" srcdoc='
-        <script>
-          atOptions = {
-            "key" : "03b4a64917d99a52eb71ea7bea6414d6",
-            "format" : "iframe",
-            "height" : 50,
-            "width" : 320,
-            "params" : {}
-          };
-        </script>
-        <script src="https://www.highperformanceformat.com/03b4a64917d99a52eb71ea7bea6414d6/invoke.js"></script>
-      '></iframe>
+    <div class="card">
+        <div class="logo">⚡</div>
+        <h1>AHB FILE HUB</h1>
+        <p>Welcome! Please use the official link provided in the video description or social media bio to access your specific download file.</p>
+        <a href="/admin-login" class="admin-link">🔒 Admin Panel Login</a>
     </div>
-
-    <div class="upload-zone" id="dropZone">
-      <i class="fas fa-file-code"></i>
-      <p id="fileNameDisplay"><strong>Click to select XML file</strong></p>
-      <input type="file" id="xmlFileInput" accept=".xml" style="display: none;">
-    </div>
-
-    <button class="btn-primary" id="uploadBtn" style="display: none;"><i class="fas fa-link"></i> Generate Isolated Link</button>
-
-    <div class="result-box" id="resultBox">
-      <h3 style="color:#7ab3ff; font-size:0.9rem; margin-bottom:6px;">Generated Link:</h3>
-      <a href="#" id="generatedLink" target="_blank"></a>
-    </div>
-
-    <a href="/admin" class="admin-link"><i class="fas fa-lock"></i> Admin Panel Login</a>
-  </div>
-
-  <script>
-    const dropZone = document.getElementById('dropZone');
-    const xmlFileInput = document.getElementById('xmlFileInput');
-    const fileNameDisplay = document.getElementById('fileNameDisplay');
-    const uploadBtn = document.getElementById('uploadBtn');
-    const resultBox = document.getElementById('resultBox');
-    const generatedLink = document.getElementById('generatedLink');
-    let selectedFile = null;
-
-    dropZone.onclick = () => xmlFileInput.click();
-    xmlFileInput.onchange = (e) => {
-      if (e.target.files.length > 0) {
-        selectedFile = e.target.files[0];
-        fileNameDisplay.innerHTML = `<strong>Selected:</strong> ${selectedFile.name}`;
-        uploadBtn.style.display = 'block';
-      }
-    };
-
-    uploadBtn.onclick = async () => {
-      if (!selectedFile) return;
-      uploadBtn.disabled = true;
-      uploadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading...';
-
-      const formData = new FormData();
-      formData.append('xml_file', selectedFile);
-
-      const response = await fetch('/upload-xml', { method: 'POST', body: formData });
-      const result = await response.json();
-
-      if (response.ok) {
-        resultBox.style.display = 'block';
-        generatedLink.href = result.share_url;
-        generatedLink.innerText = result.share_url;
-        uploadBtn.innerHTML = '<i class="fas fa-check"></i> Link Generated!';
-      } else {
-        alert('Error: ' + result.error);
-        uploadBtn.disabled = false;
-        uploadBtn.innerHTML = '<i class="fas fa-link"></i> Generate Isolated Link';
-      }
-    };
-  </script>
 </body>
 </html>
