@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Preparing Download - AHB File Hub</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: radial-gradient(ellipse at 10% 20%, #0f172a 0%, #020617 100%);
+            color: #f1f5f9;
+            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .glass-card {
+            background: rgba(15, 23, 42, 0.55);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.05);
+            padding: 40px 30px;
+            width: 100%;
+            max-width: 480px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 30% 40%, rgba(56,189,248,0.06) 0%, transparent 60%);
+            pointer-events: none;
+        }
+        .glow-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.15;
+            pointer-events: none;
+        }
+        .glow-orb.orb1 { width: 300px; height: 300px; background: #0ea5e9; top: -120px; right: -100px; }
+        .glow-orb.orb2 { width: 250px; height: 250px; background: #818cf8; bottom: -100px; left: -80px; }
+        .icon { font-size: 36px; display: block; margin-bottom: 4px; position: relative; z-index: 1; }
+        h2 {
+            font-size: 20px;
+            color: #f59e0b;
+            margin-bottom: 6px;
+            position: relative;
+            z-index: 1;
+        }
+        .subtitle {
+            font-size: 13px;
+            color: #94a3b8;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+        .ad-box {
+            background: rgba(0,0,0,0.2);
+            border: 1px solid rgba(255,255,255,0.04);
+            border-radius: 16px;
+            padding: 16px;
+            margin: 16px 0;
+            position: relative;
+            z-index: 1;
+        }
+        .ad-box img {
+            max-width: 100%;
+            border-radius: 12px;
+            height: auto;
+        }
+        .ad-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #94a3b8;
+            opacity: 0.4;
+            margin-top: 6px;
+            display: block;
+        }
+        .countdown-text {
+            font-size: 14px;
+            margin: 16px 0;
+            position: relative;
+            z-index: 1;
+        }
+        .countdown-number {
+            color: #38bdf8;
+            font-weight: 700;
+            font-size: 28px;
+            display: inline-block;
+            min-width: 40px;
+            text-shadow: 0 0 20px rgba(56,189,248,0.2);
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px 24px;
+            border: none;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: not-allowed;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-decoration: none;
+            color: white;
+            width: 100%;
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            box-shadow: 0 8px 24px rgba(245,158,11,0.15);
+            opacity: 0.5;
+            pointer-events: none;
+            position: relative;
+            z-index: 1;
+        }
+        .btn.active {
+            background: linear-gradient(135deg, #10b981, #059669);
+            box-shadow: 0 8px 24px rgba(16,185,129,0.2);
+            opacity: 1;
+            cursor: pointer;
+            pointer-events: auto;
+        }
+        .btn.active:hover { transform: translateY(-3px); box-shadow: 0 12px 36px rgba(16,185,129,0.3); }
+        .btn.active:active { transform: scale(0.97); }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .glass-card { animation: fadeInUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) both; }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        .countdown-number { animation: pulse 1s ease-in-out infinite; }
+        @media (max-width: 480px) {
+            .glass-card { padding: 24px 16px; }
+            .countdown-number { font-size: 24px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="glass-card">
+        <div class="glow-orb orb1"></div>
+        <div class="glow-orb orb2"></div>
+        
+        <span class="icon">📢</span>
+        <h2>Ad Verification</h2>
+        <p class="subtitle">Please view the advertisement below to support us while your link initializes.</p>
+        
+        <div class="ad-box">
+            <img src="https://via.placeholder.com/400x90/1e293b/f59e0b?text=YOUR+MONETIZATION+AD" alt="Advertisement" style="width:100%; border-radius:10px;">
+            <span class="ad-label">Advertisement Space</span>
+        </div>
+
+        <p class="countdown-text">
+            Please wait <span class="countdown-number" id="countdown">5</span> seconds...
+        </p>
+        
+        <a href="/download/{{ file_id }}" id="download-btn" class="btn">Download File Now</a>
+    </div>
+
+    <script>
+        (function() {
+            let timeLeft = 5;
+            const countdownEl = document.getElementById('countdown');
+            const downloadBtn = document.getElementById('download-btn');
+
+            const timer = setInterval(() => {
+                timeLeft--;
+                countdownEl.innerText = timeLeft;
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    countdownEl.innerText = '0';
+                    const parent = countdownEl.parentElement;
+                    if (parent) parent.innerText = 'Ready to download!';
+                    downloadBtn.classList.add('active');
+                    downloadBtn.innerText = '⬇ Download Now';
+                }
+            }, 1000);
+        })();
+    </script>
+</body>
+</html>

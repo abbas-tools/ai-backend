@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Admin Panel - AHB File Hub</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: radial-gradient(ellipse at 10% 20%, #0f172a 0%, #020617 100%);
+            color: #f1f5f9;
+            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+        .glass-card {
+            background: rgba(15, 23, 42, 0.55);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.05);
+            padding: 30px 28px;
+            width: 100%;
+            max-width: 620px;
+            position: relative;
+            overflow: hidden;
+        }
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 30% 40%, rgba(56,189,248,0.06) 0%, transparent 60%);
+            pointer-events: none;
+        }
+        .glow-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.15;
+            pointer-events: none;
+        }
+        .glow-orb.orb1 { width: 300px; height: 300px; background: #0ea5e9; top: -120px; right: -100px; }
+        .glow-orb.orb2 { width: 250px; height: 250px; background: #818cf8; bottom: -100px; left: -80px; }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+            position: relative;
+            z-index: 1;
+        }
+        .logo-area { display: flex; align-items: center; gap: 10px; }
+        .logo-icon { font-size: 28px; }
+        .logo-text {
+            font-weight: 700;
+            font-size: 18px;
+            background: linear-gradient(135deg, #38bdf8, #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .logout-link {
+            color: #94a3b8;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            padding: 6px 14px;
+            border-radius: 40px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.06);
+            transition: all 0.3s ease;
+        }
+        .logout-link:hover {
+            background: rgba(239,68,68,0.15);
+            border-color: #ef4444;
+            color: #ef4444;
+        }
+        .upload-zone {
+            background: rgba(255,255,255,0.02);
+            border: 2px dashed rgba(56,189,248,0.2);
+            border-radius: 16px;
+            padding: 24px 16px;
+            text-align: center;
+            transition: all 0.3s ease;
+            margin-bottom: 28px;
+            position: relative;
+            z-index: 1;
+        }
+        .upload-zone:hover {
+            border-color: #38bdf8;
+            background: rgba(56,189,248,0.03);
+        }
+        .upload-zone p { font-size: 13px; color: #94a3b8; margin-bottom: 12px; }
+        .upload-zone input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            color: #94a3b8;
+            font-size: 13px;
+            background: transparent;
+            border: none;
+            outline: none;
+            cursor: pointer;
+        }
+        .upload-zone input[type="file"]::file-selector-button {
+            background: linear-gradient(135deg, #0ea5e9, #818cf8);
+            border: none;
+            padding: 8px 20px;
+            border-radius: 40px;
+            color: white;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-right: 12px;
+            box-shadow: 0 4px 15px rgba(56,189,248,0.2);
+        }
+        .upload-zone input[type="file"]::file-selector-button:hover {
+            transform: scale(1.03);
+            box-shadow: 0 6px 25px rgba(56,189,248,0.3);
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-decoration: none;
+            color: white;
+        }
+        .btn-success {
+            background: linear-gradient(135deg, #10b981, #059669);
+            box-shadow: 0 8px 24px rgba(16,185,129,0.2);
+            width: 100%;
+            margin-top: 14px;
+        }
+        .btn-success:hover { transform: translateY(-3px); box-shadow: 0 12px 36px rgba(16,185,129,0.3); }
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            box-shadow: 0 8px 24px rgba(239,68,68,0.15);
+            padding: 6px 16px;
+            font-size: 12px;
+        }
+        .btn-danger:hover { transform: translateY(-2px); box-shadow: 0 12px 36px rgba(239,68,68,0.25); }
+        .btn-outline {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: none;
+            color: #94a3b8;
+            padding: 6px 16px;
+            font-size: 12px;
+        }
+        .btn-outline:hover {
+            background: rgba(255,255,255,0.04);
+            border-color: #38bdf8;
+            color: #f1f5f9;
+            transform: translateY(-2px);
+        }
+        h3 { font-size: 15px; color: #f1f5f9; margin-bottom: 12px; opacity: 0.8; position: relative; z-index: 1; }
+        .file-card {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.04);
+            border-radius: 16px;
+            padding: 16px 18px;
+            margin-bottom: 14px;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 1;
+        }
+        .file-card:hover {
+            background: rgba(255,255,255,0.04);
+            border-color: rgba(56,189,248,0.15);
+            transform: translateX(4px);
+        }
+        .file-title {
+            font-weight: 600;
+            font-size: 14px;
+            color: #f1f5f9;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .file-title span { opacity: 0.6; font-weight: 400; font-size: 12px; }
+        .link-box {
+            background: rgba(0,0,0,0.3);
+            padding: 8px 12px;
+            border-radius: 10px;
+            font-size: 12px;
+            color: #38bdf8;
+            word-break: break-all;
+            border: 1px solid rgba(56,189,248,0.08);
+            margin-bottom: 10px;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            transition: all 0.3s ease;
+        }
+        .link-box:hover {
+            border-color: rgba(56,189,248,0.2);
+            background: rgba(56,189,248,0.03);
+        }
+        .actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .actions .btn { flex: 1; min-width: 80px; text-align: center; }
+        .empty-state {
+            text-align: center;
+            color: #94a3b8;
+            padding: 30px 10px;
+            font-size: 14px;
+            opacity: 0.6;
+            position: relative;
+            z-index: 1;
+        }
+        .empty-state .icon { font-size: 40px; display: block; margin-bottom: 10px; }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .glass-card { animation: fadeInUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) both; }
+        .file-card { animation: fadeInUp 0.6s ease both; }
+        .file-card:nth-child(2) { animation-delay: 0.05s; }
+        .file-card:nth-child(3) { animation-delay: 0.1s; }
+        .file-card:nth-child(4) { animation-delay: 0.15s; }
+        @media (max-width: 480px) {
+            .glass-card { padding: 20px 16px; }
+            .header { flex-direction: column; align-items: flex-start; gap: 12px; }
+            .actions { flex-direction: column; }
+            .actions .btn { width: 100%; }
+            .upload-zone input[type="file"] { font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="glass-card">
+        <div class="glow-orb orb1"></div>
+        <div class="glow-orb orb2"></div>
+        
+        <div class="header">
+            <div class="logo-area">
+                <span class="logo-icon">👑</span>
+                <span class="logo-text">File Hub Manager</span>
+            </div>
+            <a href="/logout" class="logout-link">Logout</a>
+        </div>
+
+        <!-- Upload Form -->
+        <form method="POST" enctype="multipart/form-data" class="upload-zone">
+            <p>Upload a new file to generate an isolated shareable link:</p>
+            <input type="file" name="file" required>
+            <button type="submit" class="btn btn-success">Upload & Generate Link</button>
+        </form>
+
+        <h3>Generated Unique Links:</h3>
+
+        {% if files %}
+            {% for file_id, info in files.items() %}
+            <div class="file-card">
+                <div class="file-title">
+                    📄 {{ info.filename }}
+                    <span>#{{ file_id }}</span>
+                </div>
+                <div class="link-box" id="link-{{ file_id }}">
+                    https://ahb-files-hub.onrender.com/file/{{ file_id }}
+                </div>
+                <div class="actions">
+                    <button class="btn btn-outline" onclick="copyText('link-{{ file_id }}')">📋 Copy Link for Social Media</button>
+                    <a href="/admin/delete/{{ file_id }}" class="btn btn-danger" onclick="return confirm('Delete this file?')">Delete</a>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">
+                <span class="icon">📭</span>
+                No files uploaded yet.
+            </div>
+        {% endif %}
+    </div>
+
+    <script>
+        function copyText(containerId) {
+            const el = document.getElementById(containerId);
+            if (!el) return;
+            const text = el.innerText;
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(() => {
+                    showToast('✅ Isolated link copied! Paste it in your YouTube/TikTok/Instagram bio.');
+                }).catch(() => fallbackCopy(text));
+            } else {
+                fallbackCopy(text);
+            }
+        }
+
+        function fallbackCopy(text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+            textarea.select();
+            try {
+                document.execCommand('copy');
+                showToast('✅ Link copied!');
+            } catch (e) {
+                showToast('⚠️ Could not copy. Please select manually.');
+            }
+            document.body.removeChild(textarea);
+        }
+
+        function showToast(msg) {
+            const old = document.querySelector('.custom-toast');
+            if (old) old.remove();
+            const toast = document.createElement('div');
+            toast.className = 'custom-toast';
+            toast.innerText = msg;
+            Object.assign(toast.style, {
+                position: 'fixed',
+                bottom: '30px',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                background: 'rgba(15,23,42,0.9)',
+                backdropFilter: 'blur(20px)',
+                border: '1px solid rgba(255,255,255,0.06)',
+                padding: '12px 28px',
+                borderRadius: '60px',
+                color: '#f1f5f9',
+                fontSize: '14px',
+                fontWeight: '500',
+                boxShadow: '0 20px 40px rgba(0,0,0,0.6)',
+                zIndex: '9999',
+                transition: 'all 0.3s ease',
+                maxWidth: '90%',
+                textAlign: 'center'
+            });
+            document.body.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(-50%) translateY(20px)';
+                setTimeout(() => toast.remove(), 400);
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
