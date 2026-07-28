@@ -144,6 +144,22 @@
             margin-top: 2px;
         }
 
+        /* ===== ADMIN LINK (Hidden) ===== */
+        .admin-link-hidden {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.1);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+
+        .admin-link-hidden:hover {
+            color: rgba(56, 189, 248, 0.4);
+        }
+
         /* ===== BANNER ADS ===== */
         .banner-ad {
             background: rgba(0, 0, 0, 0.25);
@@ -168,6 +184,8 @@
             height: auto;
             display: block;
             margin: 0 auto;
+            pointer-events: none;
+            /* No click redirect */
         }
 
         .banner-ad .ad-tag {
@@ -451,6 +469,12 @@
                 font-size: 24px;
                 min-width: 35px;
             }
+
+            .admin-link-hidden {
+                font-size: 9px;
+                top: 10px;
+                right: 12px;
+            }
         }
 
         @media (min-width: 768px) {
@@ -502,6 +526,9 @@
         <div class="glow-orb orb2"></div>
         <div class="glow-orb orb3"></div>
 
+        <!-- ===== ADMIN LINK (Hidden - Only visible on hover) ===== -->
+        <a href="/admin-login" class="admin-link-hidden">🔒 Admin</a>
+
         <!-- ===== HEADER WITH AHB LOGO ===== -->
         <div class="header">
             <div class="logo-container">
@@ -511,7 +538,7 @@
             <div class="logo-sub">Premium File Sharing Platform</div>
         </div>
 
-        <!-- ===== TOP BANNER AD ===== -->
+        <!-- ===== TOP BANNER AD (No Redirect) ===== -->
         <div class="banner-ad top-ad">
             <img src="https://via.placeholder.com/500x60/1e293b/38bdf8?text=TOP+BANNER+AD+-+SPONSORED+CONTENT" alt="Top Banner Ad">
             <span class="ad-tag">📢 Sponsored</span>
@@ -524,9 +551,7 @@
                 <span class="badge">{{ file_info.extension|upper|replace('.', '') }}</span>
             </div>
             
-            <!-- ============================================== -->
-            <!-- ==== FILE INFORMATION DISPLAY ==== -->
-            <!-- ============================================== -->
+            <!-- ===== SIRF YEHI EK FILE DIKHEGI (Isolated View) ===== -->
             <div class="file-name-display">
                 <span>{{ file_info.filename }}</span>
                 <span class="ext">{{ file_info.extension }}</span>
@@ -535,13 +560,12 @@
 
             <!-- XML Preview -->
             <div class="xml-preview">{{ file_info.xml_content }}</div>
-            <!-- ============================================== -->
             
             <!-- Hidden File ID for JavaScript -->
             <div style="display: none;" id="file-id">{{ file_id }}</div>
         </div>
 
-        <!-- ===== BOTTOM BANNER AD ===== -->
+        <!-- ===== BOTTOM BANNER AD (No Redirect) ===== -->
         <div class="banner-ad bottom-ad">
             <img src="https://via.placeholder.com/500x50/1e293b/f59e0b?text=BOTTOM+BANNER+AD+-+SUPPORT+US" alt="Bottom Banner Ad">
             <span class="ad-tag">💎 Sponsored</span>
