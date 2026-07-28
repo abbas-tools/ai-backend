@@ -1,1 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AHB FILE HUB - Admin Dashboard</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+    body { background: #08080e; color: #f0f4ff; padding: 30px; display: flex; justify-content: center; min-height: 100vh; }
+    .container { width: 100%; max-width: 850px; background: rgba(16, 20, 36, 0.9); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 24px; padding: 30px; box-shadow: 0 20px 48px rgba(0,0,0,0.8); }
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 15px; }
+    h2 { color: #a0e9ff; font-size: 1.6rem; }
+    .logout { color: #ff6b6b; text-decoration: none; font-size: 0.9rem; }
+    .section { margin-bottom: 25px; background: rgba(0,0,0,0.3); padding: 20px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.04); }
+    .section h3 { color: #7ab3ff; margin-bottom: 12px; font-size: 1.1rem; }
+    label { display: block; font-size: 0.85rem; color: #99aacb; margin-bottom: 6px; }
+    input { width: 100%; padding: 12px; background: #000; border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; color: #fff; margin-bottom: 12px; }
+    button { padding: 12px 20px; border: none; border-radius: 10px; background: linear-gradient(135deg, #3b82f6, #8b5cf6); color: white; font-weight: 600; cursor: pointer; }
+    ul { list-style: none; max-height: 150px; overflow-y: auto; background: #000; padding: 10px; border-radius: 10px; }
+    li { padding: 8px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.85rem; color: #a0e9ff; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h2>👑 AHB FILE HUB ADMIN</h2>
+      <a href="/admin/logout" class="logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </div>
 
+    <div class="section">
+      <h3>🎨 Site Customization</h3>
+      <form method="POST">
+        <label>Site Title:</label>
+        <input type="text" name="site_title" value="{{ config.site_title }}" required>
+        
+        <label>Theme Glow Color (Hex Code):</label>
+        <input type="text" name="theme_glow" value="{{ config.theme_glow }}" required>
+        
+        <button type="submit"><i class="fas fa-save"></i> Save Changes</button>
+      </form>
+    </div>
+
+    <div class="section">
+      <h3>📂 Uploaded XML Files Storage Overview</h3>
+      <ul>
+        {% if files %}
+          {% for file in files %}
+            <li><i class="fas fa-file-code"></i> {{ file }}</li>
+          {% endfor %}
+        {% else %}
+          <li style="color:#666;">No XML files uploaded yet.</li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+</body>
+</html>
