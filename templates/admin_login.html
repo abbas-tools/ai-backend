@@ -21,8 +21,8 @@
             backdrop-filter: blur(20px) saturate(180%);
             -webkit-backdrop-filter: blur(20px) saturate(180%);
             border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 24px;
-            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.05);
+            border-radius: 28px;
+            box-shadow: 0 30px 60px -15px rgba(0,0,0,0.9), inset 0 1px 0 rgba(255,255,255,0.05);
             padding: 40px 30px;
             width: 100%;
             max-width: 420px;
@@ -36,21 +36,21 @@
             left: -50%;
             width: 200%;
             height: 200%;
-            background: radial-gradient(circle at 30% 40%, rgba(56,189,248,0.06) 0%, transparent 60%);
+            background: radial-gradient(circle at 30% 40%, rgba(56,189,248,0.05) 0%, transparent 60%);
             pointer-events: none;
         }
         .glow-orb {
             position: absolute;
             border-radius: 50%;
             filter: blur(80px);
-            opacity: 0.15;
+            opacity: 0.12;
             pointer-events: none;
         }
         .glow-orb.orb1 { width: 300px; height: 300px; background: #0ea5e9; top: -120px; right: -100px; }
         .glow-orb.orb2 { width: 250px; height: 250px; background: #818cf8; bottom: -100px; left: -80px; }
-        .icon { font-size: 36px; display: block; margin-bottom: 6px; position: relative; z-index: 1; }
-        h2 { font-size: 20px; color: #38bdf8; margin-bottom: 6px; position: relative; z-index: 1; }
-        .subtitle { font-size: 13px; color: #94a3b8; margin-bottom: 20px; position: relative; z-index: 1; }
+        .icon { font-size: 36px; display: block; margin-bottom: 6px; }
+        h2 { font-size: 20px; color: #38bdf8; margin-bottom: 6px; }
+        .subtitle { font-size: 13px; color: #94a3b8; margin-bottom: 20px; }
         .error-box {
             background: rgba(239,68,68,0.08);
             border: 1px solid rgba(239,68,68,0.15);
@@ -60,10 +60,8 @@
             font-size: 13px;
             margin-bottom: 16px;
             text-align: center;
-            position: relative;
-            z-index: 1;
         }
-        .input-group { margin-bottom: 16px; position: relative; z-index: 1; }
+        .input-group { margin-bottom: 16px; }
         input {
             width: 100%;
             padding: 14px 18px;
@@ -98,8 +96,6 @@
             width: 100%;
             background: linear-gradient(135deg, #0ea5e9, #818cf8);
             box-shadow: 0 8px 24px rgba(56,189,248,0.15);
-            position: relative;
-            z-index: 1;
         }
         .btn:hover { transform: translateY(-3px); box-shadow: 0 12px 36px rgba(56,189,248,0.25); }
         .btn:active { transform: scale(0.97); }
@@ -111,15 +107,16 @@
             text-decoration: none;
             opacity: 0.6;
             transition: all 0.3s ease;
-            position: relative;
-            z-index: 1;
         }
         .back-link:hover { opacity: 1; color: #38bdf8; }
         @keyframes fadeInUp {
             from { opacity: 0; transform: translateY(30px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        .glass-card { animation: fadeInUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) both; }
+        .glass-card { animation: fadeInUp 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275) both; }
+        @media (max-width: 480px) {
+            .glass-card { padding: 24px 16px; border-radius: 20px; }
+        }
     </style>
 </head>
 <body>
@@ -129,11 +126,11 @@
         <span class="icon">🔐</span>
         <h2>Admin Access</h2>
         <p class="subtitle">Enter credentials to manage files</p>
-        
+
         {% if error %}
         <div class="error-box">{{ error }}</div>
         {% endif %}
-        
+
         <form method="POST">
             <div class="input-group">
                 <input type="text" name="username" placeholder="Username (admin)" required>
