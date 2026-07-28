@@ -17,16 +17,13 @@ ADMIN_USER = "admin"
 ADMIN_PASS = "KING56"
 
 # ==============================================
-# HELPER FUNCTION: Get file extension
+# HELPER FUNCTIONS
 # ==============================================
 def get_file_extension(filename):
     if '.' in filename:
-        return filename.rsplit('.', 1)[1].lower()
-    return 'unknown'
+        return f".{filename.rsplit('.', 1)[1].lower()}"
+    return '.unknown'
 
-# ==============================================
-# HELPER FUNCTION: Get file size
-# ==============================================
 def get_file_size(file_path):
     try:
         size = os.path.getsize(file_path)
@@ -41,20 +38,25 @@ def get_file_size(file_path):
     except:
         return "Unknown"
 
-# ==============================================
-# HELPER FUNCTION: Read XML content (first few lines)
-# ==============================================
 def get_xml_preview(file_path):
     try:
         with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
-            content = f.read(500)  # Read first 500 characters
-            # Clean and format for display
-            return content
+            content = f.read(500)
+            # Escape HTML special characters
+            import html
+            return html.escape(content)
     except:
         return "<!-- XML content preview unavailable -->"
 
 # ==============================================
-# ROUTE: Viewer Page
+# ROUTE: Index (Landing Page)
+# ==============================================
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+# ==============================================
+# ROUTE: Viewer Page (Isolated File View)
 # ==============================================
 @app.route('/file/<file_id>')
 def viewer_page(file_id):
@@ -65,9 +67,9 @@ def viewer_page(file_id):
     stored_path = os.path.join(app.config['UPLOAD_FOLDER'], file_info['stored_name'])
     
     # Add additional metadata
-    file_info['extension'] = f".{get_file_extension(file_info['filename'])}"
+    file_info['extension'] = get_file_extension(file_info['filename'])
     file_info['size'] = get_file_size(stored_path)
-    file_info['date'] = "Today"  # You can add actual date logic
+    file_info['date'] = "Today"
     file_info['xml_content'] = get_xml_preview(stored_path)
     
     return render_template('viewer.html', file_info=file_info, file_id=file_id)
@@ -163,13 +165,6 @@ def delete_file(file_id):
 def logout():
     session.pop('admin_logged', None)
     return redirect(url_for('index'))
-
-# ==============================================
-# ROUTE: Index
-# ==============================================
-@app.route('/')
-def index():
-    return render_template('index.html')
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
