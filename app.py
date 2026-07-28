@@ -1,5 +1,6 @@
 import os
 import uuid
+import html
 from flask import Flask, render_template, request, redirect, url_for, session, send_from_directory, abort
 
 app = Flask(__name__)
@@ -42,8 +43,6 @@ def get_xml_preview(file_path):
     try:
         with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
             content = f.read(500)
-            # Escape HTML special characters
-            import html
             return html.escape(content)
     except:
         return "<!-- XML content preview unavailable -->"
@@ -60,6 +59,7 @@ def index():
 # ==============================================
 @app.route('/file/<file_id>')
 def viewer_page(file_id):
+    # Sirf wahi file dikhegi jiska link user ke paas hai
     if file_id not in files_db:
         abort(404)
     
@@ -75,7 +75,7 @@ def viewer_page(file_id):
     return render_template('viewer.html', file_info=file_info, file_id=file_id)
 
 # ==============================================
-# ROUTE: Download Ad Page
+# ROUTE: Download Ad Page (Ad Show Hoga)
 # ==============================================
 @app.route('/download-ad/<file_id>')
 def download_ad(file_id):
@@ -85,7 +85,7 @@ def download_ad(file_id):
     return render_template('ad_download.html', file_info=file_info, file_id=file_id)
 
 # ==============================================
-# ROUTE: Direct Download
+# ROUTE: Direct Download (Ad ke baad)
 # ==============================================
 @app.route('/download/<file_id>')
 def download_file(file_id):
@@ -100,7 +100,7 @@ def download_file(file_id):
     )
 
 # ==============================================
-# ROUTE: Admin Login
+# ROUTE: Admin Login (Sirf Admin Panel Ke Liye)
 # ==============================================
 @app.route('/admin-login', methods=['GET', 'POST'])
 def admin_login():
@@ -116,7 +116,7 @@ def admin_login():
     return render_template('admin_login.html', error=error)
 
 # ==============================================
-# ROUTE: Admin Panel
+# ROUTE: Admin Panel (Sirf Admin Access)
 # ==============================================
 @app.route('/admin-panel', methods=['GET', 'POST'])
 def admin_panel():
