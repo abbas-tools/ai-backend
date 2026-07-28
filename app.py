@@ -13,7 +13,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 files_db = {}
 
 ADMIN_USER = "admin"
-ADMIN_PASS = "ahb123"
+ADMIN_PASS = "KING56"
 
 @app.route('/')
 def index():
