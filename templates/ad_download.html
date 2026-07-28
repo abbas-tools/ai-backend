@@ -166,36 +166,46 @@
         <div class="file-name">📄 File: <strong>{{ file_info.filename }}</strong></div>
 
         <div class="ad-box">
-            <img src="https://via.placeholder.com/400x90/1e293b/f59e0b?text=YOUR+MONETIZATION+AD" alt="Advertisement" style="width:100%; border-radius:10px;">
-            <span class="ad-label">Advertisement Space</span>
-        </div>
-
-        <p class="countdown-text">
-            Please wait <span class="countdown-number" id="countdown">5</span> seconds...
-        </p>
-
-        <a href="/download/{{ file_id }}" id="download-btn" class="btn">Download File Now</a>
-    </div>
-
     <script>
-        (function() {
-            let timeLeft = 5;
-            const countdownEl = document.getElementById('countdown');
-            const downloadBtn = document.getElementById('download-btn');
-
-            const timer = setInterval(() => {
-                timeLeft--;
-                countdownEl.innerText = timeLeft;
-                if (timeLeft <= 0) {
-                    clearInterval(timer);
-                    countdownEl.innerText = '✓';
-                    const parent = countdownEl.parentElement;
-                    if (parent) parent.innerText = '✅ Ready to download!';
-                    downloadBtn.classList.add('active');
-                    downloadBtn.innerText = '⬇ Download Now';
-                }
-            }, 1000);
-        })();
+      atOptions = {
+        'key' : '03b4a64917d99a52eb71ea7bea6414d6',
+        'format' : 'iframe',
+        'height' : 50,
+        'width' : 320,
+        'params' : {}
+      };
     </script>
+    <script src="https://www.highperformanceformat.com/03b4a64917d99a52eb71ea7bea6414d6/invoke.js"></script>
+    <span class="ad-label">Advertisement Space</span>
+</div>
+
+<p class="countdown-text">
+    Please wait <span class="countdown-number" id="countdown">10</span> seconds...
+</p>
+
+<a href="https://www.effectivecpmnetwork.com/xxzz1j2s?key=18168874abae8f6e106244faf40552cd" target="_blank" id="download-btn" class="btn">Download File Now</a>
+        
+</div>
+
+<script>
+    (function() {
+        let timeLeft = 10;
+        const countdownEl = document.getElementById('countdown');
+        const downloadBtn = document.getElementById('download-btn');
+
+        const timer = setInterval(() => {
+            timeLeft--;
+            countdownEl.innerText = timeLeft;
+            if (timeLeft <= 0) {
+                clearInterval(timer);
+                countdownEl.innerText = '✓';
+                const parent = countdownEl.parentElement;
+                if (parent) parent.innerText = '✅ Ready to download!';
+                downloadBtn.classList.add('active');
+                downloadBtn.innerText = '⬇ Download Now';
+            }
+        }, 1000);
+    })();
+</script>
 </body>
 </html>
