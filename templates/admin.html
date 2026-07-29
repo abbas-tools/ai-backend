@@ -77,6 +77,21 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
+        .stats {
+            display: flex;
+            gap: 20px;
+            font-size: 12px;
+            color: #94a3b8;
+        }
+        .stats span {
+            background: rgba(255,255,255,0.05);
+            padding: 4px 12px;
+            border-radius: 20px;
+        }
+        .stats .count {
+            color: #38bdf8;
+            font-weight: bold;
+        }
         .logout-link {
             color: #94a3b8;
             text-decoration: none;
@@ -101,6 +116,10 @@
             text-align: center;
             transition: all 0.3s ease;
             margin-bottom: 28px;
+        }
+        .upload-zone.dragover {
+            border-color: #10b981;
+            background: rgba(16,185,129,0.05);
         }
         .upload-zone:hover {
             border-color: #38bdf8;
@@ -138,6 +157,15 @@
             transform: scale(1.02);
             box-shadow: 0 6px 25px rgba(56,189,248,0.3);
         }
+        .file-name-display {
+            margin-top: 8px;
+            font-size: 13px;
+            color: #10b981;
+            display: none;
+        }
+        .file-name-display.show {
+            display: block;
+        }
         .btn {
             display: inline-flex;
             align-items: center;
@@ -162,6 +190,11 @@
         .btn-success:hover {
             transform: translateY(-2px);
             box-shadow: 0 12px 35px rgba(16,185,129,0.3);
+        }
+        .btn-success:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
         }
         .btn-danger {
             background: linear-gradient(135deg, #ef4444, #dc2626);
@@ -214,6 +247,11 @@
             padding: 16px 18px;
             margin-bottom: 14px;
             transition: all 0.3s ease;
+            animation: fadeIn 0.3s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         .file-card:hover {
             background: rgba(255,255,255,0.04);
@@ -241,6 +279,11 @@
             font-size: 11px;
             font-family: 'SF Mono', 'Fira Code', monospace;
         }
+        .file-title .file-date {
+            opacity: 0.4;
+            font-weight: 400;
+            font-size: 11px;
+        }
         .link-box {
             background: rgba(0,0,0,0.3);
             padding: 8px 12px;
@@ -253,6 +296,7 @@
             font-family: 'SF Mono', 'Fira Code', monospace;
             cursor: pointer;
             transition: all 0.3s ease;
+            user-select: all;
         }
         .link-box:hover {
             background: rgba(56,189,248,0.05);
@@ -298,6 +342,10 @@
             font-size: 14px;
             animation: slideIn 0.3s ease-out;
         }
+        .toast.error {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            box-shadow: 0 10px 40px rgba(239,68,68,0.3);
+        }
         @keyframes slideIn {
             from {
                 transform: translateY(30px);
@@ -317,6 +365,10 @@
                 flex-direction: column; 
                 align-items: flex-start; 
                 gap: 12px; 
+            }
+            .stats { 
+                flex-wrap: wrap; 
+                gap: 8px; 
             }
             .actions { 
                 flex-direction: column; 
@@ -342,14 +394,20 @@
                 <span class="logo-icon">👑</span>
                 <span class="logo-text">AHB File Hub Manager</span>
             </div>
-            <a href="{{ url_for('logout') }}" class="logout-link">🚪 Logout</a>
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <div class="stats">
+                    <span>📁 <span class="count">{{ files|length if files else 0 }}</span> files</span>
+                </div>
+                <a href="{{ url_for('logout') }}" class="logout-link">🚪 Logout</a>
+            </div>
         </div>
 
         <!-- Upload Form -->
-        <form method="POST" enctype="multipart/form-data" class="upload-zone">
+        <form method="POST" enctype="multipart/form-data" class="upload-zone" id="uploadForm">
             <p>📤 Upload a new file to generate a safe cloud link:</p>
             <input type="file" name="file" id="fileInput" required onchange="updateFileName(this)">
-            <button type="submit" class="btn btn-success">🚀 Upload & Generate Link</button>
+            <div class="file-name-display" id="fileNameDisplay">📎 <span id="fileNameText"></span></div>
+            <button type="submit" class="btn btn-success" id="uploadBtn">🚀 Upload & Generate Link</button>
         </form>
 
         <!-- Files List -->
@@ -362,6 +420,9 @@
                     <span>📄</span> {{ info.filename }}
                     <span class="file-size">({{ info.size }})</span>
                     <span class="file-id">#{{ file_id }}</span>
+                    {% if info.upload_date %}
+                    <span class="file-date">{{ info.upload_date[:10] }}</span>
+                    {% endif %}
                 </div>
                 <div class="link-box" id="link-{{ file_id }}" onclick="copyFromBox('link-{{ file_id }}')">
                     {{ info.link if info.link else url_for('viewer_page', file_id=file_id, _external=True) }}
@@ -389,10 +450,16 @@
     <script>
         // Update file name display on selection
         function updateFileName(input) {
-            const label = input.nextElementSibling;
+            const display = document.getElementById('fileNameDisplay');
+            const text = document.getElementById('fileNameText');
+            const btn = document.getElementById('uploadBtn');
+            
             if (input.files && input.files[0]) {
-                // The button text is already shown by the file input
-                console.log('File selected:', input.files[0].name);
+                text.textContent = input.files[0].name + ' (' + (input.files[0].size / 1024).toFixed(1) + ' KB)';
+                display.classList.add('show');
+                btn.disabled = false;
+            } else {
+                display.classList.remove('show');
             }
         }
 
@@ -437,11 +504,42 @@
         function showToast(message) {
             const toast = document.getElementById('toast');
             toast.textContent = message;
+            toast.className = 'toast';
             toast.style.display = 'block';
             setTimeout(function() {
                 toast.style.display = 'none';
             }, 3000);
         }
+
+        // Drag and drop support
+        const uploadZone = document.querySelector('.upload-zone');
+        const fileInput = document.getElementById('fileInput');
+
+        uploadZone.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            this.classList.add('dragover');
+        });
+
+        uploadZone.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            this.classList.remove('dragover');
+        });
+
+        uploadZone.addEventListener('drop', function(e) {
+            e.preventDefault();
+            this.classList.remove('dragover');
+            if (e.dataTransfer.files.length) {
+                fileInput.files = e.dataTransfer.files;
+                updateFileName(fileInput);
+            }
+        });
+
+        // Prevent double submit
+        document.getElementById('uploadForm').addEventListener('submit', function(e) {
+            const btn = document.getElementById('uploadBtn');
+            btn.disabled = true;
+            btn.textContent = '⏳ Uploading...';
+        });
     </script>
 </body>
 </html>
