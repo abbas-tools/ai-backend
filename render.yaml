@@ -1,4 +1,3 @@
-cat > render.yaml << 'EOF'
 services:
   - type: web
     name: ahb-file-hub
@@ -14,4 +13,3 @@ services:
       name: uploads
       mountPath: /opt/render/project/src/uploads
       sizeGB: 1
-EOF
