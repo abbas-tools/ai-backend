@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>Ad Verification - AHB File Hub</title>
+    <title>Download - AHB File Hub</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -53,12 +53,11 @@
         h2 { font-size: 20px; color: #f59e0b; margin-bottom: 6px; }
         .subtitle { font-size: 13px; color: #94a3b8; margin-bottom: 20px; }
 
-        /* AD BOX - Real Ads in Sandbox iframe */
         .ad-box {
             background: rgba(0,0,0,0.2);
             border: 1px solid rgba(255,255,255,0.04);
             border-radius: 16px;
-            padding: 12px;
+            padding: 16px;
             margin: 16px 0;
             min-height: 80px;
             display: flex;
@@ -74,14 +73,7 @@
             height: 60px;
             border: none;
             border-radius: 8px;
-            /* 🔒 SANDBOX ATTRIBUTE - No redirect, no popups, no top navigation */
-            sandbox="allow-scripts allow-same-origin allow-forms allow-popups-to-escape-sandbox";
-            /* Security: prevent top-level navigation */
-            allow="autoplay; encrypted-media";
-        }
-        /* Security: Prevent iframe from redirecting top window */
-        .ad-box iframe[seamless] {
-            display: block;
+            sandbox="allow-scripts allow-same-origin allow-forms";
         }
         .ad-label {
             font-size: 10px;
@@ -126,10 +118,6 @@
             color: #10b981;
             margin-top: 12px;
             opacity: 0.6;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
         }
 
         @media (max-width: 480px) {
@@ -150,14 +138,13 @@
         <div class="glow-orb orb2"></div>
 
         <span class="icon">📢</span>
-        <h2>Ad Verification</h2>
+        <h2>Support Us</h2>
         <p class="subtitle">Please view the advertisement below to support us</p>
 
         <div class="file-name">📄 File: <strong>{{ file_info.filename }}</strong></div>
 
         <!-- ===== REAL ADS IN SANDBOX IFRAME ===== -->
         <div class="ad-box">
-            <!-- 🔒 SANDBOX IFRAME - Real ads show honge, redirect nahi honge -->
             <iframe 
                 srcdoc="
                     <!DOCTYPE html>
@@ -195,30 +182,5 @@
             🔒 Safe & Secure — No Auto Redirect
         </div>
     </div>
-
-    <!-- 🔒 Extra Protection: Prevent iframe redirects -->
-    <script>
-        // Block any attempts to redirect the parent window from iframe
-        window.addEventListener('message', function(e) {
-            if (e.data && e.data.type === 'redirect') {
-                e.preventDefault();
-                return false;
-            }
-        });
-
-        // Prevent iframe from navigating top
-        document.querySelectorAll('iframe').forEach(function(iframe) {
-            iframe.addEventListener('load', function() {
-                try {
-                    // If iframe tries to redirect, block it
-                    if (iframe.contentWindow && iframe.contentWindow.location) {
-                        // Allow only iframe internal navigation
-                    }
-                } catch(e) {
-                    // Cross-origin - safe
-                }
-            });
-        });
-    </script>
 </body>
 </html>
