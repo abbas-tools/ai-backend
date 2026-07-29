@@ -1,1 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>500 - Server Error | AHB File Hub</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            padding: 20px;
+        }
+        .error-container {
+            background: white;
+            border-radius: 20px;
+            padding: 60px 50px;
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: shake 0.5s ease-in-out;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+        .error-code {
+            font-size: 120px;
+            font-weight: 900;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+            margin-bottom: 10px;
+        }
+        .error-title {
+            font-size: 32px;
+            color: #2d3748;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+        .error-message {
+            font-size: 18px;
+            color: #718096;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        .error-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            display: block;
+        }
+        .btn-home {
+            display: inline-block;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 14px 40px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4);
+            border: none;
+            cursor: pointer;
+        }
+        .btn-home:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(245, 87, 108, 0.5);
+        }
+        .btn-home:active {
+            transform: translateY(0);
+        }
+        .btn-retry {
+            display: inline-block;
+            background: transparent;
+            color: #f5576c;
+            padding: 12px 35px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            border: 2px solid #f5576c;
+            margin-left: 10px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .btn-retry:hover {
+            background: #f5576c;
+            color: white;
+        }
+        .error-details {
+            background: #fff5f5;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px 0;
+            font-size: 14px;
+            color: #4a5568;
+            border-left: 4px solid #f5576c;
+            text-align: left;
+        }
+        .error-details strong {
+            color: #c53030;
+        }
+        .suggestions {
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 2px solid #e2e8f0;
+            text-align: left;
+        }
+        .suggestions h4 {
+            color: #2d3748;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        .suggestions ul {
+            list-style: none;
+            padding: 0;
+        }
+        .suggestions ul li {
+            color: #718096;
+            padding: 5px 0;
+            font-size: 14px;
+        }
+        .suggestions ul li:before {
+            content: "• ";
+            color: #f5576c;
+            font-weight: bold;
+        }
+        .auto-refresh {
+            margin-top: 15px;
+            font-size: 14px;
+            color: #a0aec0;
+        }
+        .auto-refresh span {
+            color: #f5576c;
+            font-weight: 600;
+        }
+        .buttons-group {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        @media (max-width: 480px) {
+            .error-container {
+                padding: 40px 25px;
+            }
+            .error-code {
+                font-size: 80px;
+            }
+            .error-title {
+                font-size: 24px;
+            }
+            .buttons-group {
+                flex-direction: column;
+                align-items: center;
+            }
+            .btn-retry {
+                margin-left: 0;
+                margin-top: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <span class="error-icon">⚡</span>
+        <div class="error-code">500</div>
+        <h1 class="error-title">Internal Server Error</h1>
+        <p class="error-message">
+            Something went wrong on our end. Don't worry, we're working on fixing it.
+            Please try again in a few moments.
+        </p>
+        
+        <div class="error-details">
+            <strong>Error ID:</strong> <span id="error-id">{{ error_id or 'N/A' }}</span><br>
+            <strong>Timestamp:</strong> <span id="error-time">{{ current_time or 'N/A' }}</span><br>
+            <strong>Path:</strong> <span id="error-path">{{ request.path }}</span>
+        </div>
+        
+        <div class="buttons-group">
+            <a href="{{ url_for('index') }}" class="btn-home">🏠 Back to Home</a>
+            <a href="javascript:location.reload()" class="btn-retry">🔄 Retry</a>
+        </div>
+        
+        <div class="suggestions">
+            <h4>💡 What you can do:</h4>
+            <ul>
+                <li>Refresh the page and try again</li>
+                <li>Clear your browser cache and cookies</li>
+                <li>Try again after a few minutes</li>
+                <li>Contact support if the problem persists</li>
+            </ul>
+        </div>
+        
+        <div class="auto-refresh">
+            ⏳ Auto-retry in <span id="countdown">30</span> seconds
+        </div>
+    </div>
 
+    <script>
+        // Auto-refresh countdown
+        let seconds = 30;
+        const countdownElement = document.getElementById('countdown');
+        
+        function updateCountdown() {
+            seconds--;
+            if (seconds <= 0) {
+                location.reload();
+            } else {
+                if (countdownElement) {
+                    countdownElement.textContent = seconds;
+                }
+            }
+        }
+        
+        // Start countdown
+        if (countdownElement) {
+            setInterval(updateCountdown, 1000);
+        }
+        
+        // Generate random error ID if not provided
+        document.addEventListener('DOMContentLoaded', function() {
+            const errorIdSpan = document.getElementById('error-id');
+            if (errorIdSpan && errorIdSpan.textContent === 'N/A') {
+                errorIdSpan.textContent = 'ERR-' + Math.random().toString(36).substring(2, 10).toUpperCase();
+            }
+            
+            // Show current time
+            const timeSpan = document.getElementById('error-time');
+            if (timeSpan && timeSpan.textContent === 'N/A') {
+                const now = new Date();
+                timeSpan.textContent = now.toLocaleString('en-US', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: true
+                });
+            }
+        });
+    </script>
+</body>
+</html>
