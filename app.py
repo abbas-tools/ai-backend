@@ -23,7 +23,7 @@ app.secret_key = os.getenv('FLASK_SECRET_KEY', 'ahb_secure_secret_key_xyz_2026_u
 
 # Cloudinary Configuration
 cloudinary.config(
-    cloud_name=os.getenv('CLOUDINARY_CLOUD_NAME', 'Root'),
+    cloud_name=os.getenv('CLOUDINARY_CLOUD_NAME', 'a0ec1nvp'),
     api_key=os.getenv('CLOUDINARY_API_KEY', '884661819567361'),
     api_secret=os.getenv('CLOUDINARY_API_SECRET', 'R0IrtPJFveu0Tcbt3xSxsOtQSy4'),
 )
