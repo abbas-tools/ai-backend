@@ -60,6 +60,12 @@
             font-size: 13px;
             margin-bottom: 16px;
             text-align: center;
+            animation: shake 0.5s ease-in-out;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
         }
         .input-group { margin-bottom: 16px; }
         input {
@@ -79,6 +85,10 @@
             background: rgba(0,0,0,0.35);
         }
         input::placeholder { color: #94a3b8; opacity: 0.6; }
+        input:-webkit-autofill {
+            -webkit-box-shadow: 0 0 0 30px rgba(0,0,0,0.25) inset !important;
+            -webkit-text-fill-color: #f1f5f9 !important;
+        }
         .btn {
             display: inline-flex;
             align-items: center;
@@ -96,9 +106,27 @@
             width: 100%;
             background: linear-gradient(135deg, #0ea5e9, #818cf8);
             box-shadow: 0 8px 24px rgba(56,189,248,0.15);
+            position: relative;
+            overflow: hidden;
         }
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .btn:hover::after { opacity: 1; }
         .btn:hover { transform: translateY(-3px); box-shadow: 0 12px 36px rgba(56,189,248,0.25); }
         .btn:active { transform: scale(0.97); }
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
         .back-link {
             display: block;
             margin-top: 18px;
@@ -107,8 +135,16 @@
             text-decoration: none;
             opacity: 0.6;
             transition: all 0.3s ease;
+            text-align: center;
         }
         .back-link:hover { opacity: 1; color: #38bdf8; }
+        .footer-text {
+            margin-top: 20px;
+            font-size: 11px;
+            color: #475569;
+            text-align: center;
+            opacity: 0.4;
+        }
         @keyframes fadeInUp {
             from { opacity: 0; transform: translateY(30px); }
             to { opacity: 1; transform: translateY(0); }
@@ -117,6 +153,23 @@
         @media (max-width: 480px) {
             .glass-card { padding: 24px 16px; border-radius: 20px; }
         }
+        /* Password show/hide toggle */
+        .password-wrapper {
+            position: relative;
+        }
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: transparent;
+            border: none;
+            color: #94a3b8;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 5px;
+        }
+        .password-toggle:hover { color: #38bdf8; }
     </style>
 </head>
 <body>
@@ -131,16 +184,47 @@
         <div class="error-box">{{ error }}</div>
         {% endif %}
 
-        <form method="POST">
+        <form method="POST" id="loginForm">
             <div class="input-group">
-                <input type="text" name="username" placeholder="Username (admin)" required>
+                <input type="text" name="username" id="username" placeholder="Username (admin)" required autofocus>
             </div>
-            <div class="input-group">
-                <input type="password" name="password" placeholder="Password (KING56)" required>
+            <div class="input-group password-wrapper">
+                <input type="password" name="password" id="password" placeholder="Password (KING56)" required>
+                <button type="button" class="password-toggle" onclick="togglePassword()">👁️</button>
             </div>
-            <button type="submit" class="btn">Login →</button>
+            <button type="submit" class="btn" id="loginBtn">Login →</button>
         </form>
         <a href="/" class="back-link">← Back to Home</a>
+        <div class="footer-text">AHB File Hub v2.0</div>
     </div>
+
+    <script>
+        // Password show/hide toggle
+        function togglePassword() {
+            const password = document.getElementById('password');
+            const toggle = document.querySelector('.password-toggle');
+            if (password.type === 'password') {
+                password.type = 'text';
+                toggle.textContent = '🙈';
+            } else {
+                password.type = 'password';
+                toggle.textContent = '👁️';
+            }
+        }
+
+        // Prevent multiple submissions
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            const btn = document.getElementById('loginBtn');
+            btn.disabled = true;
+            btn.textContent = '⏳ Logging in...';
+        });
+
+        // Enter key support
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                document.getElementById('loginForm').submit();
+            }
+        });
+    </script>
 </body>
 </html>
