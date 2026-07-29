@@ -30,25 +30,12 @@
             overflow: hidden;
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        .glass-card::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle at 30% 40%, rgba(56,189,248,0.05) 0%, transparent 60%);
-            pointer-events: none;
-            z-index: 0;
-        }
-        .glass-card>* { position: relative; z-index: 1; }
         .glow-orb {
             position: absolute;
             border-radius: 50%;
             filter: blur(80px);
             opacity: 0.12;
             pointer-events: none;
-            z-index: 0;
         }
         .glow-orb.orb1 { width: 300px; height: 300px; background: #0ea5e9; top: -120px; right: -100px; }
         .glow-orb.orb2 { width: 250px; height: 250px; background: #818cf8; bottom: -100px; left: -80px; }
@@ -92,28 +79,32 @@
             opacity: 0.5;
         }
 
-        .banner-ad {
-            background: rgba(0,0,0,0.25);
+        .ad-box {
+            background: rgba(0,0,0,0.2);
             border: 1px solid rgba(255,255,255,0.04);
             border-radius: 14px;
             padding: 12px;
             margin: 12px 0 16px 0;
             text-align: center;
             transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            min-height: 80px;
         }
-        .banner-ad:hover {
+        .ad-box:hover {
             border-color: rgba(56,189,248,0.1);
             background: rgba(0,0,0,0.3);
         }
-        .banner-ad img {
+        .ad-box img {
             max-width: 100%;
             border-radius: 10px;
             height: auto;
             display: block;
             margin: 0 auto;
-            pointer-events: none;
+            max-height: 90px;
+            object-fit: contain;
         }
-        .banner-ad .ad-tag {
+        .ad-box .ad-tag {
             font-size: 9px;
             text-transform: uppercase;
             letter-spacing: 2px;
@@ -122,8 +113,46 @@
             margin-top: 4px;
             display: block;
         }
-        .banner-ad.top-ad { margin-top: 0; }
-        .banner-ad.bottom-ad { margin-bottom: 0; margin-top: 16px; }
+        .ad-box.top-ad { margin-top: 0; }
+        .ad-box.bottom-ad { margin-bottom: 0; margin-top: 16px; }
+
+        /* Lock Overlay */
+        .ad-lock {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.4);
+            backdrop-filter: blur(3px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 14px;
+            z-index: 10;
+            cursor: default;
+            transition: all 0.6s ease;
+        }
+        .ad-lock.unlocked {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .ad-lock .lock-icon {
+            font-size: 24px;
+            background: rgba(0,0,0,0.7);
+            padding: 6px 14px;
+            border-radius: 40px;
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #f59e0b;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+        }
+        .ad-lock .lock-icon span {
+            color: #94a3b8;
+            font-size: 11px;
+        }
 
         .file-info-box {
             background: rgba(0,0,0,0.2);
@@ -177,23 +206,6 @@
             color: #64748b;
             margin-top: 4px;
         }
-        .xml-preview {
-            background: rgba(0,0,0,0.3);
-            border-radius: 10px;
-            padding: 12px 14px;
-            margin-top: 10px;
-            font-family: 'SF Mono', 'Fira Code', monospace;
-            font-size: 11px;
-            color: #94a3b8;
-            overflow-x: auto;
-            white-space: pre-wrap;
-            word-break: break-all;
-            max-height: 120px;
-            overflow-y: auto;
-            border: 1px solid rgba(255,255,255,0.03);
-        }
-        .xml-preview::-webkit-scrollbar { width: 4px; }
-        .xml-preview::-webkit-scrollbar-thumb { background: rgba(56,189,248,0.2); border-radius: 10px; }
 
         .btn-3d-container {
             perspective: 800px;
@@ -259,33 +271,6 @@
             font-size: 14px;
             color: #94a3b8;
         }
-        .countdown-number {
-            color: #10b981;
-            font-weight: 700;
-            font-size: 30px;
-            display: inline-block;
-            min-width: 45px;
-        }
-
-        .custom-toast {
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(15,23,42,0.92);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255,255,255,0.06);
-            padding: 14px 28px;
-            border-radius: 60px;
-            color: #f1f5f9;
-            font-size: 14px;
-            font-weight: 500;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
-            z-index: 9999;
-            transition: all 0.3s ease;
-            max-width: 90%;
-            text-align: center;
-        }
 
         @media (max-width: 480px) {
             .glass-card { padding: 20px 16px; border-radius: 20px; }
@@ -293,10 +278,8 @@
             .logo-icon { font-size: 34px; }
             .file-name-display { font-size: 15px; }
             .btn-3d { font-size: 14px; padding: 14px 20px; }
-            .banner-ad { padding: 8px; }
-            .banner-ad img { border-radius: 8px; }
-            .xml-preview { font-size: 10px; max-height: 80px; padding: 10px 12px; }
-            .countdown-number { font-size: 24px; min-width: 35px; }
+            .ad-box { padding: 8px; }
+            .ad-box img { border-radius: 8px; }
         }
         @media (min-width: 768px) {
             .glass-card { padding: 40px 38px; max-width: 600px; }
@@ -326,22 +309,21 @@
             <div class="logo-sub">Premium File Sharing Platform</div>
         </div>
 
-        <!-- TOP BANNER AD -->
-        <div class="banner-ad top-ad">
-            <script>
-                atOptions = {
-                    'key' : '03b4a64917d99a52eb71ea7bea6414d6',
-                    'format' : 'iframe',
-                    'height' : 50,
-                    'width' : 320,
-                    'params' : {}
-                };
-            </script>
-            <script src="https://www.highperformanceformat.com/03b4a64917d99a52eb71ea7bea6414d6/invoke.js"></script>
+        <!-- ===== TOP AD WITH LOCK ===== -->
+        <div class="ad-box top-ad" id="topAd">
+            <div class="ad-lock" id="topAdLock">
+                <div class="lock-icon">🔒 <span id="topLockText">Wait 10s</span></div>
+            </div>
+            <a href="https://www.effectivecpmnetwork.com/xxzz1j2s?key=18168874abae8f6e106244faf40552cd" 
+               target="_blank" 
+               style="display:block; text-decoration:none; color:inherit;">
+                <img src="https://via.placeholder.com/320x50/0ea5e9/ffffff?text=Support+Us+-+Click+Here" 
+                     alt="Advertisement">
+            </a>
             <span class="ad-tag">📢 Sponsored</span>
         </div>
         
-        <!-- SIRF YEHI EK FILE DIKHEGI (Isolated View) -->
+        <!-- FILE INFO -->
         <div class="file-info-box">
             <div class="file-label">
                 📄 FILE
@@ -356,31 +338,28 @@
                 • 📅 {{ file_info.upload_date[:10] if file_info.upload_date else 'N/A' }}
                 {% endif %}
             </div>
-            <div class="xml-preview">{{ file_info.xml_content }}</div>
             <div style="display: none;" id="file-id">{{ file_id }}</div>
         </div>
 
-        <!-- BOTTOM BANNER AD -->
-        <div class="banner-ad bottom-ad">
-            <script>
-                atOptions = {
-                    'key' : '03b4a64917d99a52eb71ea7bea6414d6',
-                    'format' : 'iframe',
-                    'height' : 50,
-                    'width' : 320,
-                    'params' : {}
-                };
-            </script>
-            <script src="https://www.highperformanceformat.com/03b4a64917d99a52eb71ea7bea6414d6/invoke.js"></script>
+        <!-- ===== BOTTOM AD WITH LOCK ===== -->
+        <div class="ad-box bottom-ad" id="bottomAd">
+            <div class="ad-lock" id="bottomAdLock">
+                <div class="lock-icon">🔒 <span id="bottomLockText">Wait 10s</span></div>
+            </div>
+            <a href="https://www.effectivecpmnetwork.com/xxzz1j2s?key=18168874abae8f6e106244faf40552cd" 
+               target="_blank" 
+               style="display:block; text-decoration:none; color:inherit;">
+                <img src="https://via.placeholder.com/320x50/818cf8/ffffff?text=Support+Us+-+Click+Here" 
+                     alt="Advertisement">
+            </a>
             <span class="ad-tag">💎 Sponsored</span>
         </div>
 
-        <!-- COUNTDOWN (Ready State) -->
+        <!-- DOWNLOAD BUTTON -->
         <div class="countdown-wrapper">
-            <span class="countdown-text" style="color: #10b981; font-weight: 600;">✅ Ready to download!</span>
+            <span style="color: #10b981; font-weight: 600;">✅ Ready to download!</span>
         </div>
 
-        <!-- 3D DOWNLOAD BUTTON - Ad Page Pe Jayega -->
         <div class="btn-3d-container">
             <a href="/download-ad/{{ file_id }}" class="btn-3d download-btn" id="download-btn">
                 <span class="icon">📦</span>
@@ -391,38 +370,57 @@
     </div>
 
     <script>
-        // Toast notification for download click
-        document.getElementById('download-btn').addEventListener('click', function(e) {
-            showToast('📢 Please view the ad before downloading...');
-        });
+        (function() {
+            let timeLeft = 10;
+            const topLock = document.getElementById('topAdLock');
+            const bottomLock = document.getElementById('bottomAdLock');
+            const topLockText = document.getElementById('topLockText');
+            const bottomLockText = document.getElementById('bottomLockText');
+            const downloadBtn = document.getElementById('download-btn');
 
-        function showToast(msg) {
-            const old = document.querySelector('.custom-toast');
-            if (old) old.remove();
-            const toast = document.createElement('div');
-            toast.className = 'custom-toast';
-            toast.innerText = msg;
-            document.body.appendChild(toast);
-            setTimeout(() => {
-                toast.style.opacity = '0';
-                toast.style.transform = 'translateX(-50%) translateY(20px)';
-                setTimeout(() => toast.remove(), 400);
-            }, 3000);
-        }
+            const timer = setInterval(() => {
+                timeLeft--;
+                
+                // Update lock texts
+                if (topLockText) topLockText.textContent = 'Wait ' + timeLeft + 's';
+                if (bottomLockText) bottomLockText.textContent = 'Wait ' + timeLeft + 's';
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    
+                    // Unlock both ads
+                    if (topLock) topLock.classList.add('unlocked');
+                    if (bottomLock) bottomLock.classList.add('unlocked');
+                    
+                    // Download button ko activate karein
+                    downloadBtn.classList.add('active');
+                    downloadBtn.innerHTML = '⬇ Download Now';
+                }
+            }, 1000);
 
-        // 3D Card Hover Effect
-        const card = document.querySelector('.glass-card');
-        card.addEventListener('mousemove', function(e) {
-            const rect = this.getBoundingClientRect();
-            const x = (e.clientX - rect.left) / rect.width;
-            const y = (e.clientY - rect.top) / rect.height;
-            const rotateX = (y - 0.5) * 4;
-            const rotateY = (x - 0.5) * 4;
-            this.style.transform = `perspective(800px) rotateX(${-rotateX}deg) rotateY(${rotateY}deg) scale(1.01)`;
-        });
-        card.addEventListener('mouseleave', function() {
-            this.style.transform = 'perspective(800px) rotateX(0deg) rotateY(0deg) scale(1)';
-        });
+            // Toast notification
+            document.getElementById('download-btn').addEventListener('click', function(e) {
+                if (!this.classList.contains('active')) {
+                    e.preventDefault();
+                    showToast('⏳ Please wait for the ads to unlock!');
+                }
+            });
+
+            function showToast(msg) {
+                const old = document.querySelector('.custom-toast');
+                if (old) old.remove();
+                const toast = document.createElement('div');
+                toast.className = 'custom-toast';
+                toast.style.cssText = 'position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:rgba(15,23,42,0.92);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.06);padding:14px 28px;border-radius:60px;color:#f1f5f9;font-size:14px;font-weight:500;box-shadow:0 20px 40px rgba(0,0,0,0.6);z-index:9999;max-width:90%;text-align:center;';
+                toast.innerText = msg;
+                document.body.appendChild(toast);
+                setTimeout(() => {
+                    toast.style.opacity = '0';
+                    toast.style.transform = 'translateX(-50%) translateY(20px)';
+                    setTimeout(() => toast.remove(), 400);
+                }, 3000);
+            }
+        })();
     </script>
 </body>
 </html>
