@@ -5,7 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>Admin Panel - AHB File Hub</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+        }
         body {
             background: radial-gradient(ellipse at 10% 20%, #0f172a 0%, #020617 100%);
             color: #f1f5f9;
@@ -25,7 +29,7 @@
             box-shadow: 0 30px 60px -15px rgba(0,0,0,0.9), inset 0 1px 0 rgba(255,255,255,0.05);
             padding: 30px 28px;
             width: 100%;
-            max-width: 620px;
+            max-width: 720px;
             position: relative;
             overflow: hidden;
         }
@@ -36,8 +40,20 @@
             opacity: 0.12;
             pointer-events: none;
         }
-        .glow-orb.orb1 { width: 300px; height: 300px; background: #0ea5e9; top: -120px; right: -100px; }
-        .glow-orb.orb2 { width: 250px; height: 250px; background: #818cf8; bottom: -100px; left: -80px; }
+        .glow-orb.orb1 { 
+            width: 300px; 
+            height: 300px; 
+            background: #0ea5e9; 
+            top: -120px; 
+            right: -100px; 
+        }
+        .glow-orb.orb2 { 
+            width: 250px; 
+            height: 250px; 
+            background: #818cf8; 
+            bottom: -100px; 
+            left: -80px; 
+        }
         .header {
             display: flex;
             justify-content: space-between;
@@ -46,8 +62,14 @@
             padding-bottom: 16px;
             border-bottom: 1px solid rgba(255,255,255,0.04);
         }
-        .logo-area { display: flex; align-items: center; gap: 10px; }
-        .logo-icon { font-size: 28px; }
+        .logo-area { 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+        }
+        .logo-icon { 
+            font-size: 28px; 
+        }
         .logo-text {
             font-weight: 700;
             font-size: 18px;
@@ -84,7 +106,11 @@
             border-color: #38bdf8;
             background: rgba(56,189,248,0.03);
         }
-        .upload-zone p { font-size: 13px; color: #94a3b8; margin-bottom: 12px; }
+        .upload-zone p { 
+            font-size: 13px; 
+            color: #94a3b8; 
+            margin-bottom: 12px; 
+        }
         .upload-zone input[type="file"] {
             width: 100%;
             padding: 10px;
@@ -108,6 +134,10 @@
             margin-right: 12px;
             box-shadow: 0 4px 15px rgba(56,189,248,0.2);
         }
+        .upload-zone input[type="file"]::file-selector-button:hover {
+            transform: scale(1.02);
+            box-shadow: 0 6px 25px rgba(56,189,248,0.3);
+        }
         .btn {
             display: inline-flex;
             align-items: center;
@@ -129,11 +159,19 @@
             width: 100%;
             margin-top: 14px;
         }
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 35px rgba(16,185,129,0.3);
+        }
         .btn-danger {
             background: linear-gradient(135deg, #ef4444, #dc2626);
             box-shadow: 0 8px 24px rgba(239,68,68,0.15);
             padding: 6px 16px;
             font-size: 12px;
+        }
+        .btn-danger:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 30px rgba(239,68,68,0.3);
         }
         .btn-outline {
             background: transparent;
@@ -146,8 +184,29 @@
             background: rgba(255,255,255,0.04);
             border-color: #38bdf8;
             color: #f1f5f9;
+            transform: translateY(-2px);
         }
-        h3 { font-size: 15px; color: #f1f5f9; margin-bottom: 12px; opacity: 0.8; }
+        .btn-view {
+            background: transparent;
+            border: 1px solid rgba(16,185,129,0.3);
+            color: #10b981;
+            padding: 6px 16px;
+            font-size: 12px;
+        }
+        .btn-view:hover {
+            background: rgba(16,185,129,0.1);
+            border-color: #10b981;
+            transform: translateY(-2px);
+        }
+        h3 { 
+            font-size: 15px; 
+            color: #f1f5f9; 
+            margin-bottom: 16px; 
+            opacity: 0.8;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
         .file-card {
             background: rgba(255,255,255,0.02);
             border: 1px solid rgba(255,255,255,0.04);
@@ -155,6 +214,11 @@
             padding: 16px 18px;
             margin-bottom: 14px;
             transition: all 0.3s ease;
+        }
+        .file-card:hover {
+            background: rgba(255,255,255,0.04);
+            border-color: rgba(255,255,255,0.08);
+            transform: translateX(4px);
         }
         .file-title {
             font-weight: 600;
@@ -166,7 +230,17 @@
             gap: 8px;
             flex-wrap: wrap;
         }
-        .file-title span { opacity: 0.6; font-weight: 400; font-size: 12px; }
+        .file-title .file-size {
+            color: #38bdf8;
+            font-weight: 400;
+            font-size: 12px;
+        }
+        .file-title .file-id {
+            opacity: 0.5;
+            font-weight: 400;
+            font-size: 11px;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+        }
         .link-box {
             background: rgba(0,0,0,0.3);
             padding: 8px 12px;
@@ -177,102 +251,196 @@
             border: 1px solid rgba(56,189,248,0.08);
             margin-bottom: 10px;
             font-family: 'SF Mono', 'Fira Code', monospace;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .link-box:hover {
+            background: rgba(56,189,248,0.05);
+            border-color: rgba(56,189,248,0.2);
         }
         .actions {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             flex-wrap: wrap;
         }
-        .actions .btn { flex: 1; min-width: 80px; text-align: center; }
+        .actions .btn { 
+            flex: 1; 
+            min-width: 80px; 
+            text-align: center; 
+            font-size: 12px;
+        }
         .empty-state {
             text-align: center;
             color: #94a3b8;
-            padding: 30px 10px;
+            padding: 40px 10px;
             font-size: 14px;
             opacity: 0.6;
         }
+        .empty-state .icon {
+            font-size: 50px;
+            display: block;
+            margin-bottom: 12px;
+        }
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 14px 28px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(16,185,129,0.3);
+            display: none;
+            z-index: 1000;
+            font-weight: 500;
+            font-size: 14px;
+            animation: slideIn 0.3s ease-out;
+        }
+        @keyframes slideIn {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
         @media (max-width: 480px) {
-            .glass-card { padding: 20px 16px; border-radius: 20px; }
-            .header { flex-direction: column; align-items: flex-start; gap: 12px; }
-            .actions { flex-direction: column; }
-            .actions .btn { width: 100%; }
+            .glass-card { 
+                padding: 20px 16px; 
+                border-radius: 20px; 
+            }
+            .header { 
+                flex-direction: column; 
+                align-items: flex-start; 
+                gap: 12px; 
+            }
+            .actions { 
+                flex-direction: column; 
+            }
+            .actions .btn { 
+                width: 100%; 
+            }
+            .upload-zone input[type="file"] {
+                font-size: 12px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="glass-card">
+        <!-- Glow Orbs for background effect -->
         <div class="glow-orb orb1"></div>
         <div class="glow-orb orb2"></div>
 
+        <!-- Header -->
         <div class="header">
             <div class="logo-area">
                 <span class="logo-icon">👑</span>
-                <span class="logo-text">File Hub Manager</span>
+                <span class="logo-text">AHB File Hub Manager</span>
             </div>
-            <a href="/logout" class="logout-link">Logout</a>
+            <a href="{{ url_for('logout') }}" class="logout-link">🚪 Logout</a>
         </div>
 
+        <!-- Upload Form -->
         <form method="POST" enctype="multipart/form-data" class="upload-zone">
-            <p>Upload a new file to generate a safe cloud link:</p>
-            <input type="file" name="file" required>
-            <button type="submit" class="btn btn-success">Upload & Generate Link</button>
+            <p>📤 Upload a new file to generate a safe cloud link:</p>
+            <input type="file" name="file" id="fileInput" required onchange="updateFileName(this)">
+            <button type="submit" class="btn btn-success">🚀 Upload & Generate Link</button>
         </form>
 
-        <h3>Generated Unique Links:</h3>
+        <!-- Files List -->
+        <h3>🔗 Generated Unique Links</h3>
 
         {% if files %}
             {% for file_id, info in files.items() %}
             <div class="file-card">
                 <div class="file-title">
-                    📄 {{ info.filename }}
-                    <span style="color: #38bdf8;">({{ info.size }})</span>
-                    <span>#{{ file_id }}</span>
+                    <span>📄</span> {{ info.filename }}
+                    <span class="file-size">({{ info.size }})</span>
+                    <span class="file-id">#{{ file_id }}</span>
                 </div>
-                <div class="link-box" id="link-{{ file_id }}">
-                    https://ahb-files-hub.onrender.com/file/{{ file_id }}
+                <div class="link-box" id="link-{{ file_id }}" onclick="copyFromBox('link-{{ file_id }}')">
+                    {{ info.link if info.link else url_for('viewer_page', file_id=file_id, _external=True) }}
                 </div>
                 <div class="actions">
                     <button class="btn btn-outline" onclick="copyText('link-{{ file_id }}')">📋 Copy Link</button>
-                    <a href="{{ info.cloud_url }}" target="_blank" class="btn btn-outline" style="border-color: rgba(16,185,129,0.3); color: #10b981;">🔗 Cloud View</a>
-                    <a href="/admin/delete/{{ file_id }}" class="btn btn-danger" onclick="return confirm('Delete this file?')">Delete</a>
+                    <a href="{{ info.link if info.link else url_for('viewer_page', file_id=file_id) }}" target="_blank" class="btn btn-view">👁️ View</a>
+                    <a href="{{ info.cloud_url }}" target="_blank" class="btn btn-outline" style="border-color: rgba(16,185,129,0.3); color: #10b981;">☁️ Cloud</a>
+                    <a href="{{ url_for('delete_file', file_id=file_id) }}" class="btn btn-danger" onclick="return confirm('⚠️ Delete this file permanently?')">🗑️ Delete</a>
                 </div>
             </div>
             {% endfor %}
         {% else %}
             <div class="empty-state">
-                <span style="font-size: 40px; display: block; margin-bottom: 10px;">📭</span>
-                No files uploaded yet.
+                <span class="icon">📭</span>
+                No files uploaded yet.<br>
+                <span style="font-size: 12px; opacity: 0.7;">Upload a file above to generate your first link!</span>
             </div>
         {% endif %}
     </div>
 
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">✅ Link copied to clipboard!</div>
+
     <script>
+        // Update file name display on selection
+        function updateFileName(input) {
+            const label = input.nextElementSibling;
+            if (input.files && input.files[0]) {
+                // The button text is already shown by the file input
+                console.log('File selected:', input.files[0].name);
+            }
+        }
+
+        // Copy text from element
         function copyText(containerId) {
             const el = document.getElementById(containerId);
             if (!el) return;
-            const text = el.innerText;
+            const text = el.innerText.trim();
+            
             if (navigator.clipboard && navigator.clipboard.writeText) {
                 navigator.clipboard.writeText(text).then(() => {
-                    alert('✅ Link copied to clipboard!');
+                    showToast('✅ Link copied to clipboard!');
                 }).catch(() => fallbackCopy(text));
             } else {
                 fallbackCopy(text);
             }
         }
+
+        // Copy on click directly on link box
+        function copyFromBox(containerId) {
+            copyText(containerId);
+        }
+
+        // Fallback copy method
         function fallbackCopy(text) {
             const textarea = document.createElement('textarea');
             textarea.value = text;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
             document.body.appendChild(textarea);
             textarea.select();
             try {
                 document.execCommand('copy');
-                alert('✅ Link copied!');
+                showToast('✅ Link copied!');
             } catch (e) {
-                alert('⚠️ Could not copy.');
+                showToast('⚠️ Could not copy. Please select and copy manually.');
             }
             document.body.removeChild(textarea);
+        }
+
+        // Show toast notification
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.style.display = 'block';
+            setTimeout(function() {
+                toast.style.display = 'none';
+            }, 3000);
         }
     </script>
 </body>
