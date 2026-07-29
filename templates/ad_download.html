@@ -42,13 +42,6 @@
         .glow-orb.orb1 { width: 300px; height: 300px; background: #0ea5e9; top: -120px; right: -100px; }
         .glow-orb.orb2 { width: 250px; height: 250px; background: #818cf8; bottom: -100px; left: -80px; }
 
-        .logo-text {
-            font-size: 24px;
-            font-weight: 800;
-            background: linear-gradient(135deg, #38bdf8, #818cf8, #a78bfa);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
         .icon { font-size: 36px; display: block; margin-bottom: 4px; }
         h2 { font-size: 20px; color: #f59e0b; margin-bottom: 6px; }
         .subtitle { font-size: 13px; color: #94a3b8; margin-bottom: 20px; }
@@ -66,14 +59,6 @@
             flex-direction: column;
             position: relative;
             overflow: hidden;
-        }
-        .ad-box iframe {
-            width: 100%;
-            max-width: 320px;
-            height: 60px;
-            border: none;
-            border-radius: 8px;
-            sandbox="allow-scripts allow-same-origin allow-forms";
         }
         .ad-label {
             font-size: 10px;
@@ -122,8 +107,6 @@
 
         @media (max-width: 480px) {
             .glass-card { padding: 24px 16px; border-radius: 20px; }
-            .logo-text { font-size: 20px; }
-            .ad-box iframe { height: 50px; }
         }
         @keyframes fadeInUp {
             from { opacity: 0; transform: translateY(30px); }
@@ -158,10 +141,10 @@
                                 'width' : 320,
                                 'params' : {}
                             };
-                        <\/script>
-                        <script src='https://www.highperformanceformat.com/03b4a64917d99a52eb71ea7bea6414d6/invoke.js'><\/script>
+                        </script>
+                        <script src='https://www.highperformanceformat.com/03b4a64917d99a52eb71ea7bea6414d6/invoke.js'></script>
                     </head>
-                    <body style='margin:0;padding:0;background:transparent;'>
+                    <body style='margin:0;padding:0;background:transparent;display:flex;justify-content:center;align-items:center;'>
                     </body>
                     </html>
                 "
@@ -172,15 +155,41 @@
             <span class="ad-label">📢 Advertisement</span>
         </div>
 
-        <p style="color: #10b981; font-weight: 600; margin: 10px 0;">✅ Ready to download!</p>
+        <p id="status-text" style="color: #10b981; font-weight: 600; margin: 10px 0;">✅ Ready to download!</p>
 
-        <a href="{{ url_for('download_file', file_id=file_id) }}" class="btn">
+        <!-- Download Button -->
+        <a href="javascript:void(0);" id="downloadBtn" class="btn">
             ⬇ Download Now
         </a>
 
         <div class="safe-badge">
-            🔒 Safe & Secure — No Auto Redirect
+            🔒 Safe & Secure Hub
         </div>
     </div>
+
+    <script>
+        // Yahan apna Smart Link / Direct Link paste karein
+        const smartLinkURL = "https://your-smart-link-url.com"; 
+        const actualDownloadURL = "{{ url_for('download_file', file_id=file_id) }}";
+
+        let clickCount = 0;
+        const downloadBtn = document.getElementById('downloadBtn');
+        const statusText = document.getElementById('status-text');
+
+        downloadBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            clickCount++;
+
+            if (clickCount === 1) {
+                // First Click: Smart Link open karega naye tab mein
+                window.open(smartLinkURL, '_blank');
+                statusText.innerText = "⚠️ Click one more time to start download!";
+            } else if (clickCount >= 2) {
+                // Second Click: File download start kar dega
+                statusText.innerText = "📥 Downloading started...";
+                window.location.href = actualDownloadURL;
+            }
+        });
+    </script>
 </body>
 </html>
