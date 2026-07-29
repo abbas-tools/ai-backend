@@ -241,7 +241,6 @@
         .btn-3d .arrow { transition: transform 0.3s ease; }
         .btn-3d:hover:not(.disabled) .arrow { transform: translateX(4px); }
 
-        /* Download button - always active, goes to ad page first */
         .btn-3d.download-btn {
             background: linear-gradient(135deg, #10b981, #059669);
             box-shadow: 0 8px 0 #065f46, 0 12px 30px rgba(16,185,129,0.2);
@@ -329,17 +328,17 @@
 
         <!-- TOP BANNER AD -->
         <div class="banner-ad top-ad">
-    <script>
-      atOptions = {
-        'key' : '03b4a64917d99a52eb71ea7bea6414d6',
-        'format' : 'iframe',
-        'height' : 50,
-        'width' : 320,
-        'params' : {}
-      };
-    </script>
-    <script src="https://www.highperformanceformat.com/03b4a64917d99a52eb71ea7bea6414d6/invoke.js"></script>
-    <span class="ad-tag">📢 Sponsored</span>
+            <script>
+                atOptions = {
+                    'key' : '03b4a64917d99a52eb71ea7bea6414d6',
+                    'format' : 'iframe',
+                    'height' : 50,
+                    'width' : 320,
+                    'params' : {}
+                };
+            </script>
+            <script src="https://www.highperformanceformat.com/03b4a64917d99a52eb71ea7bea6414d6/invoke.js"></script>
+            <span class="ad-tag">📢 Sponsored</span>
         </div>
         
         <!-- SIRF YEHI EK FILE DIKHEGI (Isolated View) -->
@@ -352,24 +351,28 @@
                 <span>{{ file_info.filename }}</span>
                 <span class="ext">{{ file_info.extension }}</span>
             </div>
-            <div class="file-size">📊 {{ file_info.size }} • Updated: {{ file_info.date }}</div>
+            <div class="file-size">📊 {{ file_info.size }} 
+                {% if file_info.upload_date %}
+                • 📅 {{ file_info.upload_date[:10] if file_info.upload_date else 'N/A' }}
+                {% endif %}
+            </div>
             <div class="xml-preview">{{ file_info.xml_content }}</div>
             <div style="display: none;" id="file-id">{{ file_id }}</div>
         </div>
 
         <!-- BOTTOM BANNER AD -->
         <div class="banner-ad bottom-ad">
-    <script>
-      atOptions = {
-        'key' : '03b4a64917d99a52eb71ea7bea6414d6',
-        'format' : 'iframe',
-        'height' : 50,
-        'width' : 320,
-        'params' : {}
-      };
-    </script>
-    <script src="https://www.highperformanceformat.com/03b4a64917d99a52eb71ea7bea6414d6/invoke.js"></script>
-    <span class="ad-tag">💎 Sponsored</span>
+            <script>
+                atOptions = {
+                    'key' : '03b4a64917d99a52eb71ea7bea6414d6',
+                    'format' : 'iframe',
+                    'height' : 50,
+                    'width' : 320,
+                    'params' : {}
+                };
+            </script>
+            <script src="https://www.highperformanceformat.com/03b4a64917d99a52eb71ea7bea6414d6/invoke.js"></script>
+            <span class="ad-tag">💎 Sponsored</span>
         </div>
 
         <!-- COUNTDOWN (Ready State) -->
