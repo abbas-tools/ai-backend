@@ -38,55 +38,50 @@ ADMIN_PASS = 'KING56'
 # ==============================================
 
 def get_all_files():
-    """Get all files safely from Cloudinary API - RAW TYPE"""
+    """Get all files directly from Cloudinary API - RAW TYPE"""
     files_dict = {}
     try:
         print("🔄 Fetching files from Cloudinary...")
         
+        # RAW type files fetch karein (XML, TXT, JSON, etc.)
         result = cloudinary.api.resources(
             type='upload',
-            resource_type='raw',
+            resource_type='raw',  # <-- RAW TYPE FILES
             max_results=100
         )
         
-        resources = result.get('resources', [])
-        print(f"📁 Cloudinary response: {len(resources)} files found")
+        print(f"📁 Cloudinary response: {len(result.get('resources', []))} files found")
         
-        for resource in resources:
-            try:
-                public_id = resource.get('public_id')
-                if not public_id:
-                    continue
-                
-                file_id = public_id.split('/')[-1] if '/' in public_id else public_id
-                
-                bytes_size = resource.get('bytes', 0)
-                if bytes_size < 1024 * 1024:
-                    size_str = f'{bytes_size / 1024:.1f} KB'
-                else:
-                    size_str = f'{bytes_size / (1024 * 1024):.1f} MB'
-                
-                file_format = resource.get('format', 'file')
-                if not file_format:
-                    file_format = 'file'
-                
-                files_dict[file_id] = {
-                    'filename': f"{file_id}.{file_format}",
-                    'cloud_url': resource.get('secure_url', ''),
-                    'public_id': public_id,
-                    'size': size_str,
-                    'upload_date': resource.get('created_at', ''),
-                    'format': file_format,
-                    'bytes': bytes_size,
-                }
-            except Exception as inner_e:
-                print(f"⚠️ Skipping item: {inner_e}")
-                continue
+        for resource in result.get('resources', []):
+            public_id = resource.get('public_id')
+            file_id = public_id.split('/')[-1] if '/' in public_id else public_id
             
+            bytes_size = resource.get('bytes', 0)
+            if bytes_size < 1024 * 1024:
+                size_str = f'{bytes_size / 1024:.1f} KB'
+            else:
+                size_str = f'{bytes_size / (1024 * 1024):.1f} MB'
+            
+            file_format = resource.get('format', 'file')
+            if not file_format:
+                file_format = 'file'
+            
+            files_dict[file_id] = {
+                'filename': f"{file_id}.{file_format}",
+                'cloud_url': resource.get('secure_url'),
+                'public_id': public_id,
+                'size': size_str,
+                'upload_date': resource.get('created_at', ''),
+                'format': file_format,
+                'bytes': bytes_size,
+            }
+            
+        print(f"✅ Total files loaded from Cloudinary: {len(files_dict)}")
+        
     except Exception as e:
-        print(f"❌ Cloudinary API Error: {e}")
-        # Error aane par bhi app crash nahi hogi, khaali dict return hogi
-        return {}
+        print(f"❌ Error fetching from Cloudinary: {e}")
+        import traceback
+        traceback.print_exc()
     
     return files_dict
 
@@ -169,10 +164,12 @@ def admin_panel():
                     cloud_result = cloudinary.uploader.upload(
                         file,
                         public_id=file_id,
-                        resource_type='raw'
+                        resource_type='raw'  # <-- RAW TYPE UPLOAD
                     )
                     
                     print(f"✅ Upload successful!")
+                    print(f"🔗 Cloud URL: {cloud_result.get('secure_url')}")
+                    print(f"📌 Public ID: {cloud_result.get('public_id')}")
                     
                 except Exception as e:
                     print(f"❌ Upload Error: {e}")
@@ -186,6 +183,8 @@ def admin_panel():
     for file_id in files_db:
         files_db[file_id]['link'] = generate_unique_link(file_id)
     
+    print(f"📊 Sending {len(files_db)} files to template")
+    
     return render_template('admin.html', files=files_db)
 
 @app.route('/admin/delete/<file_id>')
@@ -193,14 +192,23 @@ def delete_file(file_id):
     if not session.get('admin_logged'):
         return redirect(url_for('admin_login'))
     
-    try:
-        print(f"🗑️ Deleting file_id: {file_id}")
-        cloudinary.uploader.destroy(file_id, resource_type='raw', invalidate=True)
-        print(f"✅ Successfully deleted {file_id}")
-    except Exception as e:
-        print(f"❌ Error deleting file: {e}")
+    files_db = get_all_files()
+    if file_id in files_db:
+        try:
+            public_id = files_db[file_id].get('public_id')
+            if public_id:
+                cloudinary.uploader.destroy(public_id)
+                print(f"🗑️ Deleted from Cloudinary: {public_id}")
+                
+        except Exception as e:
+            print(f"❌ Error deleting file: {e}")
     
     return redirect(url_for('admin_panel'))
+
+@app.route('/logout')
+def logout():
+    session.pop('admin_logged', None)
+    return redirect(url_for('index'))
 
 @app.errorhandler(404)
 def not_found(error):
@@ -212,4 +220,3 @@ def internal_error(error):
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
-    
