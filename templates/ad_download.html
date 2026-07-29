@@ -30,17 +30,6 @@
             position: relative;
             overflow: hidden;
         }
-        .glass-card::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle at 30% 40%, rgba(56,189,248,0.05) 0%, transparent 60%);
-            pointer-events: none;
-            z-index: 0;
-        }
         .glass-card>* { position: relative; z-index: 1; }
         .glow-orb {
             position: absolute;
@@ -68,14 +57,11 @@
             background: rgba(0,0,0,0.2);
             border: 1px solid rgba(255,255,255,0.04);
             border-radius: 16px;
-            padding: 12px;
+            padding: 16px;
             margin: 16px 0;
-            min-height: 80px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             position: relative;
             overflow: hidden;
+            min-height: 80px;
         }
         .ad-box iframe {
             width: 100%;
@@ -83,6 +69,8 @@
             height: 60px;
             border: none;
             border-radius: 8px;
+            display: block;
+            margin: 0 auto;
         }
         .ad-label {
             font-size: 10px;
@@ -92,6 +80,44 @@
             opacity: 0.4;
             margin-top: 6px;
             display: block;
+        }
+
+        /* LOCK OVERLAY - SIRF AD PAR LOCK */
+        .ad-lock {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 16px;
+            z-index: 10;
+            cursor: default;
+            transition: all 0.8s ease;
+        }
+        .ad-lock.unlocked {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .ad-lock .lock-icon {
+            font-size: 22px;
+            background: rgba(0,0,0,0.8);
+            padding: 8px 18px;
+            border-radius: 40px;
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #f59e0b;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+        }
+        .ad-lock .lock-icon span {
+            color: #94a3b8;
+            font-size: 12px;
         }
 
         .countdown-text {
@@ -150,44 +176,6 @@
         }
         .file-name strong { color: #38bdf8; }
 
-        /* Lock overlay - Ad ko lock karta hai */
-        .ad-lock {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.3);
-            backdrop-filter: blur(2px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 16px;
-            z-index: 10;
-            cursor: default;
-            transition: all 0.5s ease;
-        }
-        .ad-lock.unlocked {
-            opacity: 0;
-            pointer-events: none;
-        }
-        .ad-lock .lock-icon {
-            font-size: 28px;
-            background: rgba(0,0,0,0.6);
-            padding: 8px 16px;
-            border-radius: 40px;
-            border: 1px solid rgba(255,255,255,0.1);
-            color: #f59e0b;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 14px;
-        }
-        .ad-lock .lock-icon span {
-            color: #94a3b8;
-            font-size: 12px;
-        }
-
         @media (max-width: 480px) {
             .glass-card { padding: 24px 16px; border-radius: 20px; }
             .countdown-number { font-size: 24px; }
@@ -214,24 +202,24 @@
 
         <!-- ===== AD WITH LOCK ===== -->
         <div class="ad-box" id="adContainer">
-            <!-- Lock Overlay - Countdown ke baad unlock hoga -->
+            <!-- LOCK OVERLAY -->
             <div class="ad-lock" id="adLock">
                 <div class="lock-icon">
-                    🔒 <span id="lockText">Wait {{ countdown if countdown else 10 }}s</span>
+                    🔒 <span id="lockText">Wait <span id="lockCountdown">10</span>s</span>
                 </div>
             </div>
             
-            <!-- Safe Ad Display - No Auto Redirect -->
-            <div style="width:100%; display:flex; justify-content:center;">
-                <a href="https://www.effectivecpmnetwork.com/xxzz1j2s?key=18168874abae8f6e106244faf40552cd" 
-                   target="_blank" 
-                   style="display:block; text-decoration:none; width:100%; max-width:320px;"
-                   id="adLink">
-                    <img src="https://via.placeholder.com/320x50/0ea5e9/ffffff?text=Support+Us+-+Click+Here" 
-                         alt="Advertisement" 
-                         style="width:100%; border-radius:8px;">
-                </a>
-            </div>
+            <!-- ORIGINAL AD - WAPAS LA DIYA -->
+            <script>
+                atOptions = {
+                    'key' : '03b4a64917d99a52eb71ea7bea6414d6',
+                    'format' : 'iframe',
+                    'height' : 50,
+                    'width' : 320,
+                    'params' : {}
+                };
+            </script>
+            <script src="https://www.highperformanceformat.com/03b4a64917d99a52eb71ea7bea6414d6/invoke.js"></script>
             <span class="ad-label">📢 Advertisement</span>
         </div>
 
@@ -250,16 +238,13 @@
             const countdownEl = document.getElementById('countdown');
             const downloadBtn = document.getElementById('download-btn');
             const adLock = document.getElementById('adLock');
-            const lockText = document.getElementById('lockText');
-            const adContainer = document.getElementById('adContainer');
+            const lockCountdown = document.getElementById('lockCountdown');
 
             const timer = setInterval(() => {
                 timeLeft--;
                 countdownEl.innerText = timeLeft;
-                
-                // Update lock text
-                if (lockText) {
-                    lockText.textContent = 'Wait ' + timeLeft + 's';
+                if (lockCountdown) {
+                    lockCountdown.innerText = timeLeft;
                 }
                 
                 if (timeLeft <= 0) {
@@ -268,24 +253,17 @@
                     const parent = countdownEl.parentElement;
                     if (parent) parent.innerText = '✅ Ready to download!';
                     
-                    // Unlock ad
+                    // UNLOCK AD
                     if (adLock) {
                         adLock.classList.add('unlocked');
                     }
                     
-                    // Activate download button
+                    // ACTIVATE DOWNLOAD BUTTON
                     downloadBtn.classList.add('active');
                     downloadBtn.innerHTML = '⬇ Download Now';
                     downloadBtn.href = "{{ url_for('download_file', file_id=file_id) }}";
                 }
             }, 1000);
-
-            // Safe ad click - user intentionally clicks
-            document.getElementById('adLink').addEventListener('click', function(e) {
-                // Ad already unlocked, user clicked intentionally
-                console.log('Ad clicked by user');
-            });
-
         })();
     </script>
 </body>
