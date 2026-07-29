@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>AHB Files Hub - {{ file_info.filename }}</title>
+    <title>Download - {{ file_info.filename }}</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -25,402 +25,185 @@
             box-shadow: 0 30px 60px -15px rgba(0,0,0,0.9), inset 0 1px 0 rgba(255,255,255,0.05);
             padding: 30px 28px;
             width: 100%;
-            max-width: 560px;
+            max-width: 480px;
+            text-align: center;
             position: relative;
             overflow: hidden;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
+        .glass-card>* { position: relative; z-index: 1; }
         .glow-orb {
             position: absolute;
             border-radius: 50%;
             filter: blur(80px);
             opacity: 0.12;
             pointer-events: none;
+            z-index: 0;
         }
         .glow-orb.orb1 { width: 300px; height: 300px; background: #0ea5e9; top: -120px; right: -100px; }
         .glow-orb.orb2 { width: 250px; height: 250px; background: #818cf8; bottom: -100px; left: -80px; }
-        .glow-orb.orb3 { width: 200px; height: 200px; background: #f59e0b; top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0.05; }
 
-        .header {
-            text-align: center;
-            padding-bottom: 18px;
-            border-bottom: 1px solid rgba(255,255,255,0.04);
-            margin-bottom: 18px;
-        }
-        .logo-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            margin-bottom: 4px;
-        }
-        .logo-icon {
-            font-size: 42px;
-            filter: drop-shadow(0 0 20px rgba(56,189,248,0.3));
-            animation: logoFloat 3s ease-in-out infinite;
-        }
-        @keyframes logoFloat {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-6px); }
-        }
-        .logo-text {
-            font-size: 28px;
-            font-weight: 800;
-            letter-spacing: -0.5px;
-            background: linear-gradient(135deg, #38bdf8, #818cf8, #a78bfa);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .logo-sub {
-            font-size: 11px;
-            color: #94a3b8;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            opacity: 0.5;
-        }
+        .icon { font-size: 36px; display: block; margin-bottom: 4px; }
+        h2 { font-size: 20px; color: #f59e0b; margin-bottom: 6px; }
+        .subtitle { font-size: 13px; color: #94a3b8; margin-bottom: 15px; }
 
         .ad-box {
             background: rgba(0,0,0,0.2);
             border: 1px solid rgba(255,255,255,0.04);
-            border-radius: 14px;
+            border-radius: 16px;
             padding: 12px;
-            margin: 12px 0 16px 0;
-            text-align: center;
-            transition: all 0.3s ease;
+            margin: 12px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
             position: relative;
             overflow: hidden;
-            min-height: 80px;
         }
-        .ad-box:hover {
-            border-color: rgba(56,189,248,0.1);
-            background: rgba(0,0,0,0.3);
-        }
-        .ad-box img {
-            max-width: 100%;
-            border-radius: 10px;
-            height: auto;
-            display: block;
-            margin: 0 auto;
-            max-height: 90px;
-            object-fit: contain;
-        }
-        .ad-box .ad-tag {
-            font-size: 9px;
+        .ad-label {
+            font-size: 10px;
             text-transform: uppercase;
-            letter-spacing: 2px;
-            color: #64748b;
+            letter-spacing: 1px;
+            color: #94a3b8;
             opacity: 0.4;
             margin-top: 4px;
             display: block;
         }
-        .ad-box.top-ad { margin-top: 0; }
-        .ad-box.bottom-ad { margin-bottom: 0; margin-top: 16px; }
 
-        /* Lock Overlay */
-        .ad-lock {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.4);
-            backdrop-filter: blur(3px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 14px;
-            z-index: 10;
-            cursor: default;
-            transition: all 0.6s ease;
-        }
-        .ad-lock.unlocked {
-            opacity: 0;
-            pointer-events: none;
-        }
-        .ad-lock .lock-icon {
-            font-size: 24px;
-            background: rgba(0,0,0,0.7);
-            padding: 6px 14px;
-            border-radius: 40px;
-            border: 1px solid rgba(255,255,255,0.1);
-            color: #f59e0b;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 13px;
-        }
-        .ad-lock .lock-icon span {
-            color: #94a3b8;
-            font-size: 11px;
-        }
-
-        .file-info-box {
-            background: rgba(0,0,0,0.2);
-            border: 1px solid rgba(255,255,255,0.04);
-            border-radius: 14px;
-            padding: 16px 18px;
-            margin: 14px 0 16px 0;
-            transition: all 0.3s ease;
-        }
-        .file-info-box:hover {
-            border-color: rgba(56,189,248,0.08);
-            background: rgba(0,0,0,0.25);
-        }
-        .file-label {
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            color: #64748b;
-            margin-bottom: 6px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .file-label .badge {
-            background: rgba(56,189,248,0.1);
-            color: #38bdf8;
-            padding: 2px 10px;
-            border-radius: 20px;
-            font-size: 9px;
-        }
-        .file-name-display {
-            font-size: 18px;
-            font-weight: 600;
-            color: #f1f5f9;
-            word-break: break-all;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-        .file-name-display .ext {
-            background: rgba(56,189,248,0.08);
-            padding: 2px 12px;
-            border-radius: 20px;
-            font-size: 11px;
-            color: #38bdf8;
-            font-weight: 500;
-        }
-        .file-size {
-            font-size: 12px;
-            color: #64748b;
-            margin-top: 4px;
-        }
-
-        .btn-3d-container {
-            perspective: 800px;
-            margin: 18px 0 8px 0;
-        }
-        .btn-3d {
+        .btn {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-            width: 100%;
-            padding: 16px 28px;
+            gap: 8px;
+            padding: 14px 24px;
             border: none;
             border-radius: 60px;
-            font-weight: 700;
-            font-size: 16px;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             text-decoration: none;
             color: white;
-            background: linear-gradient(135deg, #0ea5e9, #6366f1);
-            box-shadow: 0 8px 0 #1e3a5f, 0 12px 30px rgba(56,189,248,0.2);
-            transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            position: relative;
-            letter-spacing: 0.3px;
-            cursor: pointer;
-        }
-        .btn-3d::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            border-radius: 60px;
-            background: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, transparent 100%);
-            pointer-events: none;
-        }
-        .btn-3d:hover:not(.disabled) {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 0 #1e3a5f, 0 20px 40px rgba(56,189,248,0.25);
-        }
-        .btn-3d:active:not(.disabled) {
-            transform: translateY(4px);
-            box-shadow: 0 4px 0 #1e3a5f, 0 8px 20px rgba(56,189,248,0.15);
-        }
-        .btn-3d .arrow { transition: transform 0.3s ease; }
-        .btn-3d:hover:not(.disabled) .arrow { transform: translateX(4px); }
-
-        .btn-3d.download-btn {
+            width: 100%;
             background: linear-gradient(135deg, #10b981, #059669);
             box-shadow: 0 8px 0 #065f46, 0 12px 30px rgba(16,185,129,0.2);
+            cursor: pointer;
+            margin-top: 10px;
         }
-        .btn-3d.download-btn:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 0 #065f46, 0 20px 40px rgba(16,185,129,0.3);
-        }
+        .btn:hover { transform: translateY(-3px); box-shadow: 0 12px 0 #065f46, 0 20px 40px rgba(16,185,129,0.3); }
+        .btn:active { transform: translateY(4px); box-shadow: 0 4px 0 #065f46, 0 8px 20px rgba(16,185,129,0.15); }
 
-        .countdown-wrapper {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            margin: 10px 0 4px 0;
-            font-size: 14px;
+        .file-name {
+            font-size: 13px;
             color: #94a3b8;
+            margin-bottom: 10px;
+        }
+        .file-name strong { color: #38bdf8; }
+
+        .safe-badge {
+            font-size: 11px;
+            color: #10b981;
+            margin-top: 12px;
+            opacity: 0.6;
         }
 
         @media (max-width: 480px) {
-            .glass-card { padding: 20px 16px; border-radius: 20px; }
-            .logo-text { font-size: 22px; }
-            .logo-icon { font-size: 34px; }
-            .file-name-display { font-size: 15px; }
-            .btn-3d { font-size: 14px; padding: 14px 20px; }
-            .ad-box { padding: 8px; }
-            .ad-box img { border-radius: 8px; }
-        }
-        @media (min-width: 768px) {
-            .glass-card { padding: 40px 38px; max-width: 600px; }
-            .logo-text { font-size: 32px; }
+            .glass-card { padding: 20px 14px; border-radius: 20px; }
         }
         @keyframes fadeInUp {
             from { opacity: 0; transform: translateY(30px); }
             to { opacity: 1; transform: translateY(0); }
         }
         .glass-card { animation: fadeInUp 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275) both; }
-        ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); border-radius: 10px; }
-        ::-webkit-scrollbar-thumb { background: rgba(56,189,248,0.2); border-radius: 10px; }
     </style>
 </head>
 <body>
     <div class="glass-card">
         <div class="glow-orb orb1"></div>
         <div class="glow-orb orb2"></div>
-        <div class="glow-orb orb3"></div>
 
-        <div class="header">
-            <div class="logo-container">
-                <span class="logo-icon">⚡</span>
-                <span class="logo-text">AHB FILES HUB</span>
-            </div>
-            <div class="logo-sub">Premium File Sharing Platform</div>
+        <span class="icon">📢</span>
+        <h2>Support Us</h2>
+        <p class="subtitle">Please view the advertisements below to support us</p>
+
+        <div class="file-name">📄 File: <strong>{{ file_info.filename }}</strong></div>
+
+        <!-- ===== BANNER AD 1 (300x250) inside Sandbox Iframe ===== -->
+        <div class="ad-box">
+            <iframe 
+                srcdoc="<!DOCTYPE html><html><head></head><body style='margin:0;padding:0;background:transparent;display:flex;justify-content:center;align-items:center;'>
+                <script>
+                    atOptions = {
+                        'key' : '66b634384630a2b082173552730d81a0',
+                        'format' : 'iframe',
+                        'height' : 250,
+                        'width' : 300,
+                        'params' : {}
+                    };
+                </script>
+                <script src='https://www.highperformanceformat.com/66b634384630a2b082173552730d81a0/invoke.js'></script>
+                </body></html>"
+                sandbox="allow-scripts allow-same-origin allow-forms"
+                loading="lazy"
+                style="width:300px; height:250px; border:none; background:transparent;">
+            </iframe>
+            <span class="ad-label">📢 Advertisement</span>
         </div>
 
-        <!-- ===== TOP AD WITH LOCK ===== -->
-        <div class="ad-box top-ad" id="topAd">
-            <div class="ad-lock" id="topAdLock">
-                <div class="lock-icon">🔒 <span id="topLockText">Wait 10s</span></div>
-            </div>
-            <a href="https://www.effectivecpmnetwork.com/xxzz1j2s?key=18168874abae8f6e106244faf40552cd" 
-               target="_blank" 
-               style="display:block; text-decoration:none; color:inherit;">
-                <img src="https://via.placeholder.com/320x50/0ea5e9/ffffff?text=Support+Us+-+Click+Here" 
-                     alt="Advertisement">
-            </a>
-            <span class="ad-tag">📢 Sponsored</span>
-        </div>
-        
-        <!-- FILE INFO -->
-        <div class="file-info-box">
-            <div class="file-label">
-                📄 FILE
-                <span class="badge">{{ file_info.extension|upper|replace('.', '') }}</span>
-            </div>
-            <div class="file-name-display">
-                <span>{{ file_info.filename }}</span>
-                <span class="ext">{{ file_info.extension }}</span>
-            </div>
-            <div class="file-size">📊 {{ file_info.size }} 
-                {% if file_info.upload_date %}
-                • 📅 {{ file_info.upload_date[:10] if file_info.upload_date else 'N/A' }}
-                {% endif %}
-            </div>
-            <div style="display: none;" id="file-id">{{ file_id }}</div>
+        <!-- ===== BANNER AD 2 (320x50) inside Sandbox Iframe ===== -->
+        <div class="ad-box">
+            <iframe 
+                srcdoc="<!DOCTYPE html><html><head></head><body style='margin:0;padding:0;background:transparent;display:flex;justify-content:center;align-items:center;'>
+                <script>
+                    atOptions = {
+                        'key' : '03b4a64917d99a52eb71ea7bea6414d6',
+                        'format' : 'iframe',
+                        'height' : 50,
+                        'width' : 320,
+                        'params' : {}
+                    };
+                </script>
+                <script src='https://www.highperformanceformat.com/03b4a64917d99a52eb71ea7bea6414d6/invoke.js'></script>
+                </body></html>"
+                sandbox="allow-scripts allow-same-origin allow-forms"
+                loading="lazy"
+                style="width:320px; height:50px; border:none; background:transparent;">
+            </iframe>
+            <span class="ad-label">📢 Advertisement</span>
         </div>
 
-        <!-- ===== BOTTOM AD WITH LOCK ===== -->
-        <div class="ad-box bottom-ad" id="bottomAd">
-            <div class="ad-lock" id="bottomAdLock">
-                <div class="lock-icon">🔒 <span id="bottomLockText">Wait 10s</span></div>
-            </div>
-            <a href="https://www.effectivecpmnetwork.com/xxzz1j2s?key=18168874abae8f6e106244faf40552cd" 
-               target="_blank" 
-               style="display:block; text-decoration:none; color:inherit;">
-                <img src="https://via.placeholder.com/320x50/818cf8/ffffff?text=Support+Us+-+Click+Here" 
-                     alt="Advertisement">
-            </a>
-            <span class="ad-tag">💎 Sponsored</span>
-        </div>
+        <p id="status-text" style="color: #10b981; font-weight: 600; margin: 8px 0; font-size: 13px;">✅ Ready to download!</p>
 
-        <!-- DOWNLOAD BUTTON -->
-        <div class="countdown-wrapper">
-            <span style="color: #10b981; font-weight: 600;">✅ Ready to download!</span>
-        </div>
+        <!-- Download Button -->
+        <a href="javascript:void(0);" id="downloadBtn" class="btn">
+            ⬇ Download Now
+        </a>
 
-        <div class="btn-3d-container">
-            <a href="/download-ad/{{ file_id }}" class="btn-3d download-btn" id="download-btn">
-                <span class="icon">📦</span>
-                <span>Download Now</span>
-                <span class="arrow">→</span>
-            </a>
+        <div class="safe-badge">
+            🔒 Safe & Secure Hub
         </div>
     </div>
 
     <script>
-        (function() {
-            let timeLeft = 10;
-            const topLock = document.getElementById('topAdLock');
-            const bottomLock = document.getElementById('bottomAdLock');
-            const topLockText = document.getElementById('topLockText');
-            const bottomLockText = document.getElementById('bottomLockText');
-            const downloadBtn = document.getElementById('download-btn');
+        const smartLinkURL = "https://www.effectivecpmnetwork.com/xxzz1j2s?key=18168874abae8f6e106244faf40552cd"; 
+        const actualDownloadURL = "{{ url_for('download_file', file_id=file_id) }}";
 
-            const timer = setInterval(() => {
-                timeLeft--;
-                
-                // Update lock texts
-                if (topLockText) topLockText.textContent = 'Wait ' + timeLeft + 's';
-                if (bottomLockText) bottomLockText.textContent = 'Wait ' + timeLeft + 's';
-                
-                if (timeLeft <= 0) {
-                    clearInterval(timer);
-                    
-                    // Unlock both ads
-                    if (topLock) topLock.classList.add('unlocked');
-                    if (bottomLock) bottomLock.classList.add('unlocked');
-                    
-                    // Download button ko activate karein
-                    downloadBtn.classList.add('active');
-                    downloadBtn.innerHTML = '⬇ Download Now';
-                }
-            }, 1000);
+        let clickCount = 0;
+        const downloadBtn = document.getElementById('downloadBtn');
+        const statusText = document.getElementById('status-text');
 
-            // Toast notification
-            document.getElementById('download-btn').addEventListener('click', function(e) {
-                if (!this.classList.contains('active')) {
-                    e.preventDefault();
-                    showToast('⏳ Please wait for the ads to unlock!');
-                }
-            });
+        downloadBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            clickCount++;
 
-            function showToast(msg) {
-                const old = document.querySelector('.custom-toast');
-                if (old) old.remove();
-                const toast = document.createElement('div');
-                toast.className = 'custom-toast';
-                toast.style.cssText = 'position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:rgba(15,23,42,0.92);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.06);padding:14px 28px;border-radius:60px;color:#f1f5f9;font-size:14px;font-weight:500;box-shadow:0 20px 40px rgba(0,0,0,0.6);z-index:9999;max-width:90%;text-align:center;';
-                toast.innerText = msg;
-                document.body.appendChild(toast);
-                setTimeout(() => {
-                    toast.style.opacity = '0';
-                    toast.style.transform = 'translateX(-50%) translateY(20px)';
-                    setTimeout(() => toast.remove(), 400);
-                }, 3000);
+            if (clickCount === 1) {
+                // First Click: Smart Link open hoga naye tab mein
+                window.open(smartLinkURL, '_blank');
+                statusText.innerText = "⚠️ Click one more time to start download!";
+            } else if (clickCount >= 2) {
+                // Second Click: File download start ho jayegi
+                statusText.innerText = "📥 Downloading started...";
+                window.location.href = actualDownloadURL;
             }
-        })();
+        });
     </script>
 </body>
 </html>
