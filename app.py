@@ -38,15 +38,15 @@ ADMIN_PASS = 'KING56'
 # ==============================================
 
 def get_all_files():
-    """Get all files directly from Cloudinary API - ALL TYPES"""
+    """Get all files directly from Cloudinary API - RAW TYPE"""
     files_dict = {}
     try:
         print("🔄 Fetching files from Cloudinary...")
         
-        # ALL resource types fetch karein (image, video, raw, auto)
+        # RAW type files fetch karein (XML, TXT, JSON, etc.)
         result = cloudinary.api.resources(
             type='upload',
-            resource_type='auto',  # <-- YEH LINE ADD KAREIN
+            resource_type='raw',  # <-- RAW TYPE FILES
             max_results=100
         )
         
@@ -86,7 +86,6 @@ def get_all_files():
     return files_dict
 
 def generate_unique_link(file_id):
-    """Generate unique link for file"""
     return url_for('viewer_page', file_id=file_id, _external=True)
 
 def get_file_extension(filename):
@@ -165,7 +164,7 @@ def admin_panel():
                     cloud_result = cloudinary.uploader.upload(
                         file,
                         public_id=file_id,
-                        resource_type='auto'  # <-- Sab files allow
+                        resource_type='raw'  # <-- RAW TYPE UPLOAD
                     )
                     
                     print(f"✅ Upload successful!")
