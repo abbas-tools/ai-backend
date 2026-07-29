@@ -37,16 +37,12 @@ ADMIN_PASS = 'KING56'
 # HELPER FUNCTIONS: Cloudinary se live data lana
 # ==============================================
 def get_cloudinary_files():
-  """Cloudinary se saari files fetch karta hai taake data kabhi delete na ho."""
+  """Cloudinary se baghair kisi folder restriction ke live files fetch karta hai."""
   files_dict = {}
   try:
-    # 'ahb_file_hub' folder se files mangwayein
-    result = cloudinary.api.resources(
-        type='upload', prefix='ahb_file_hub/', max_results=100
-    )
+    result = cloudinary.api.resources(type='upload', max_results=100)
 
     for resource in result.get('resources', []):
-      # public_id se unique id banayein (e.g., ahb_file_hub/xyz -> xyz)
       public_id = resource.get('public_id')
       file_id = public_id.split('/')[-1] if '/' in public_id else public_id
 
@@ -161,8 +157,7 @@ def admin_panel():
       file = request.files['file']
       if file.filename != '':
         try:
-          # Cloudinary par file upload karein 'ahb_file_hub' folder mein
-          upload_result = cloudinary.uploader.upload(
+          cloudinary.uploader.upload(
               file, folder='ahb_file_hub', resource_type='auto'
           )
         except Exception as e:
@@ -170,7 +165,6 @@ def admin_panel():
 
         return redirect(url_for('admin_panel'))
 
-  # Cloudinary se current files mangwa kar admin panel ko dein
   files_db = get_cloudinary_files()
   return render_template('admin.html', files=files_db)
 
@@ -206,4 +200,4 @@ def logout():
 
 if __name__ == '__main__':
   app.run(debug=True, host='0.0.0.0', port=5000)
-    
+            
