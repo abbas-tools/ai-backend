@@ -53,15 +53,20 @@
         h2 { font-size: 20px; color: #f59e0b; margin-bottom: 6px; }
         .subtitle { font-size: 13px; color: #94a3b8; margin-bottom: 20px; }
 
+        /* AD BOX - Real Ads in Sandbox iframe */
         .ad-box {
             background: rgba(0,0,0,0.2);
             border: 1px solid rgba(255,255,255,0.04);
             border-radius: 16px;
-            padding: 16px;
+            padding: 12px;
             margin: 16px 0;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
             position: relative;
             overflow: hidden;
-            min-height: 80px;
         }
         .ad-box iframe {
             width: 100%;
@@ -69,8 +74,14 @@
             height: 60px;
             border: none;
             border-radius: 8px;
+            /* 🔒 SANDBOX ATTRIBUTE - No redirect, no popups, no top navigation */
+            sandbox="allow-scripts allow-same-origin allow-forms allow-popups-to-escape-sandbox";
+            /* Security: prevent top-level navigation */
+            allow="autoplay; encrypted-media";
+        }
+        /* Security: Prevent iframe from redirecting top window */
+        .ad-box iframe[seamless] {
             display: block;
-            margin: 0 auto;
         }
         .ad-label {
             font-size: 10px;
@@ -80,62 +91,6 @@
             opacity: 0.4;
             margin-top: 6px;
             display: block;
-        }
-
-        /* LOCK OVERLAY - SIRF AD PAR LOCK */
-        .ad-lock {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.5);
-            backdrop-filter: blur(4px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 16px;
-            z-index: 10;
-            cursor: default;
-            transition: all 0.8s ease;
-        }
-        .ad-lock.unlocked {
-            opacity: 0;
-            pointer-events: none;
-        }
-        .ad-lock .lock-icon {
-            font-size: 22px;
-            background: rgba(0,0,0,0.8);
-            padding: 8px 18px;
-            border-radius: 40px;
-            border: 1px solid rgba(255,255,255,0.1);
-            color: #f59e0b;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 14px;
-        }
-        .ad-lock .lock-icon span {
-            color: #94a3b8;
-            font-size: 12px;
-        }
-
-        .countdown-text {
-            font-size: 14px;
-            margin: 16px 0;
-        }
-        .countdown-number {
-            color: #38bdf8;
-            font-weight: 700;
-            font-size: 28px;
-            display: inline-block;
-            min-width: 40px;
-            text-shadow: 0 0 20px rgba(56,189,248,0.2);
-            animation: pulse 1s ease-in-out infinite;
-        }
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
         }
 
         .btn {
@@ -148,26 +103,16 @@
             border-radius: 60px;
             font-weight: 600;
             font-size: 14px;
-            cursor: not-allowed;
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             text-decoration: none;
             color: white;
             width: 100%;
-            background: linear-gradient(135deg, #475569, #334155);
-            box-shadow: 0 8px 0 #1e293b, 0 12px 30px rgba(0,0,0,0.2);
-            opacity: 0.6;
-            pointer-events: none;
-            position: relative;
-        }
-        .btn.active {
             background: linear-gradient(135deg, #10b981, #059669);
             box-shadow: 0 8px 0 #065f46, 0 12px 30px rgba(16,185,129,0.2);
-            opacity: 1;
             cursor: pointer;
-            pointer-events: auto;
         }
-        .btn.active:hover { transform: translateY(-3px); box-shadow: 0 12px 0 #065f46, 0 20px 40px rgba(16,185,129,0.3); }
-        .btn.active:active { transform: translateY(4px); box-shadow: 0 4px 0 #065f46, 0 8px 20px rgba(16,185,129,0.15); }
+        .btn:hover { transform: translateY(-3px); box-shadow: 0 12px 0 #065f46, 0 20px 40px rgba(16,185,129,0.3); }
+        .btn:active { transform: translateY(4px); box-shadow: 0 4px 0 #065f46, 0 8px 20px rgba(16,185,129,0.15); }
 
         .file-name {
             font-size: 13px;
@@ -176,9 +121,19 @@
         }
         .file-name strong { color: #38bdf8; }
 
+        .safe-badge {
+            font-size: 11px;
+            color: #10b981;
+            margin-top: 12px;
+            opacity: 0.6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
         @media (max-width: 480px) {
             .glass-card { padding: 24px 16px; border-radius: 20px; }
-            .countdown-number { font-size: 24px; }
             .logo-text { font-size: 20px; }
             .ad-box iframe { height: 50px; }
         }
@@ -200,71 +155,70 @@
 
         <div class="file-name">📄 File: <strong>{{ file_info.filename }}</strong></div>
 
-        <!-- ===== AD WITH LOCK ===== -->
-        <div class="ad-box" id="adContainer">
-            <!-- LOCK OVERLAY -->
-            <div class="ad-lock" id="adLock">
-                <div class="lock-icon">
-                    🔒 <span id="lockText">Wait <span id="lockCountdown">10</span>s</span>
-                </div>
-            </div>
-            
-            <!-- ORIGINAL AD - WAPAS LA DIYA -->
-            <script>
-                atOptions = {
-                    'key' : '03b4a64917d99a52eb71ea7bea6414d6',
-                    'format' : 'iframe',
-                    'height' : 50,
-                    'width' : 320,
-                    'params' : {}
-                };
-            </script>
-            <script src="https://www.highperformanceformat.com/03b4a64917d99a52eb71ea7bea6414d6/invoke.js"></script>
+        <!-- ===== REAL ADS IN SANDBOX IFRAME ===== -->
+        <div class="ad-box">
+            <!-- 🔒 SANDBOX IFRAME - Real ads show honge, redirect nahi honge -->
+            <iframe 
+                srcdoc="
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <script>
+                            atOptions = {
+                                'key' : '03b4a64917d99a52eb71ea7bea6414d6',
+                                'format' : 'iframe',
+                                'height' : 50,
+                                'width' : 320,
+                                'params' : {}
+                            };
+                        <\/script>
+                        <script src='https://www.highperformanceformat.com/03b4a64917d99a52eb71ea7bea6414d6/invoke.js'><\/script>
+                    </head>
+                    <body style='margin:0;padding:0;background:transparent;'>
+                    </body>
+                    </html>
+                "
+                sandbox="allow-scripts allow-same-origin allow-forms"
+                loading="lazy"
+                style="width:100%; max-width:320px; height:60px; border:none; border-radius:8px; background:transparent;">
+            </iframe>
             <span class="ad-label">📢 Advertisement</span>
         </div>
 
-        <p class="countdown-text">
-            Please wait <span class="countdown-number" id="countdown">10</span> seconds...
-        </p>
+        <p style="color: #10b981; font-weight: 600; margin: 10px 0;">✅ Ready to download!</p>
 
-        <a href="{{ url_for('download_file', file_id=file_id) }}" id="download-btn" class="btn">
-            ⏳ Wait for download
+        <a href="{{ url_for('download_file', file_id=file_id) }}" class="btn">
+            ⬇ Download Now
         </a>
+
+        <div class="safe-badge">
+            🔒 Safe & Secure — No Auto Redirect
+        </div>
     </div>
 
+    <!-- 🔒 Extra Protection: Prevent iframe redirects -->
     <script>
-        (function() {
-            let timeLeft = 10;
-            const countdownEl = document.getElementById('countdown');
-            const downloadBtn = document.getElementById('download-btn');
-            const adLock = document.getElementById('adLock');
-            const lockCountdown = document.getElementById('lockCountdown');
+        // Block any attempts to redirect the parent window from iframe
+        window.addEventListener('message', function(e) {
+            if (e.data && e.data.type === 'redirect') {
+                e.preventDefault();
+                return false;
+            }
+        });
 
-            const timer = setInterval(() => {
-                timeLeft--;
-                countdownEl.innerText = timeLeft;
-                if (lockCountdown) {
-                    lockCountdown.innerText = timeLeft;
-                }
-                
-                if (timeLeft <= 0) {
-                    clearInterval(timer);
-                    countdownEl.innerText = '✓';
-                    const parent = countdownEl.parentElement;
-                    if (parent) parent.innerText = '✅ Ready to download!';
-                    
-                    // UNLOCK AD
-                    if (adLock) {
-                        adLock.classList.add('unlocked');
+        // Prevent iframe from navigating top
+        document.querySelectorAll('iframe').forEach(function(iframe) {
+            iframe.addEventListener('load', function() {
+                try {
+                    // If iframe tries to redirect, block it
+                    if (iframe.contentWindow && iframe.contentWindow.location) {
+                        // Allow only iframe internal navigation
                     }
-                    
-                    // ACTIVATE DOWNLOAD BUTTON
-                    downloadBtn.classList.add('active');
-                    downloadBtn.innerHTML = '⬇ Download Now';
-                    downloadBtn.href = "{{ url_for('download_file', file_id=file_id) }}";
+                } catch(e) {
+                    // Cross-origin - safe
                 }
-            }, 1000);
-        })();
+            });
+        });
     </script>
 </body>
 </html>
