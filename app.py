@@ -43,10 +43,9 @@ def get_all_files():
     try:
         print("🔄 Fetching files from Cloudinary...")
         
-        # RAW type files fetch karein (XML, TXT, JSON, etc.)
         result = cloudinary.api.resources(
             type='upload',
-            resource_type='raw',  # <-- RAW TYPE FILES
+            resource_type='raw',
             max_results=100
         )
         
@@ -164,12 +163,10 @@ def admin_panel():
                     cloud_result = cloudinary.uploader.upload(
                         file,
                         public_id=file_id,
-                        resource_type='raw'  # <-- RAW TYPE UPLOAD
+                        resource_type='raw'
                     )
                     
                     print(f"✅ Upload successful!")
-                    print(f"🔗 Cloud URL: {cloud_result.get('secure_url')}")
-                    print(f"📌 Public ID: {cloud_result.get('public_id')}")
                     
                 except Exception as e:
                     print(f"❌ Upload Error: {e}")
@@ -183,8 +180,6 @@ def admin_panel():
     for file_id in files_db:
         files_db[file_id]['link'] = generate_unique_link(file_id)
     
-    print(f"📊 Sending {len(files_db)} files to template")
-    
     return render_template('admin.html', files=files_db)
 
 @app.route('/admin/delete/<file_id>')
@@ -192,22 +187,11 @@ def delete_file(file_id):
     if not session.get('admin_logged'):
         return redirect(url_for('admin_login'))
     
-    files_db = get_all_files()
     try:
-        # Pehle database se exact public_id nikalne ki koshish karein
-        public_id = files_db.get(file_id, {}).get('public_id', file_id)
-        
-        print(f"🗑️ Deleting from Cloudinary - Public ID: {public_id}")
-        
-        # Raw resource type ke sath delete request bhejein
-        cloudinary.uploader.destroy(public_id, resource_type='raw', invalidate=True)
-        
-        # Backup ke tor par agar direct file_id se bhi ho sake
-        if public_id != file_id:
-            cloudinary.uploader.destroy(file_id, resource_type='raw', invalidate=True)
-            
+        print(f"🗑️ Deleting file_id: {file_id}")
+        # Direct file_id aur raw resource type ke sath delete karein
+        cloudinary.uploader.destroy(file_id, resource_type='raw', invalidate=True)
         print(f"✅ Successfully deleted {file_id}")
-                
     except Exception as e:
         print(f"❌ Error deleting file: {e}")
         import traceback
@@ -225,4 +209,3 @@ def internal_error(error):
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
-    
