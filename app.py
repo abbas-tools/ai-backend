@@ -28,8 +28,18 @@ cloudinary.config(
     api_secret=os.getenv('CLOUDINARY_API_SECRET', 'R0IrtPJFveu0Tcbt3xSxsOtQSy4'),
 )
 
-# Metadata JSON - Render persistent disk ke liye
-METADATA_FILE = os.path.join(os.getenv('UPLOAD_FOLDER', ''), 'file_metadata.json') if os.getenv('UPLOAD_FOLDER') else 'file_metadata.json'
+# ==============================================
+# PERSISTENT STORAGE SETUP - RENDER FIX
+# ==============================================
+# Render persistent disk path (free tier mein bhi kaam karega)
+UPLOAD_FOLDER = os.getenv('UPLOAD_FOLDER', 'uploads')
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+# Metadata JSON - Persistent disk par save hoga
+METADATA_FILE = os.path.join(UPLOAD_FOLDER, 'file_metadata.json')
+
+print(f"📁 Upload Folder: {UPLOAD_FOLDER}")
+print(f"📄 Metadata File: {METADATA_FILE}")
 
 # Admin Credentials
 ADMIN_USER = os.getenv('ADMIN_USER', 'admin')
@@ -45,7 +55,8 @@ def load_metadata():
         try:
             with open(METADATA_FILE, 'r') as f:
                 return json.load(f)
-        except:
+        except Exception as e:
+            print(f"⚠️ Error loading metadata: {e}")
             return {}
     return {}
 
@@ -53,12 +64,14 @@ def save_metadata(metadata):
     """Save file metadata to JSON file"""
     try:
         # Ensure directory exists
-        os.makedirs(os.path.dirname(METADATA_FILE) if os.path.dirname(METADATA_FILE) else '.', exist_ok=True)
+        os.makedirs(os.path.dirname(METADATA_FILE) or '.', exist_ok=True)
         with open(METADATA_FILE, 'w') as f:
             json.dump(metadata, f, indent=2)
         print(f"✅ Metadata saved: {len(metadata)} files")
+        return True
     except Exception as e:
         print(f"❌ Error saving metadata: {e}")
+        return False
 
 def get_all_files():
     """Get all files from metadata (fast and reliable)"""
