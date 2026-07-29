@@ -28,8 +28,8 @@ cloudinary.config(
     api_secret=os.getenv('CLOUDINARY_API_SECRET', 'R0IrtPJFveu0Tcbt3xSxsOtQSy4'),
 )
 
-# Metadata JSON
-METADATA_FILE = 'file_metadata.json'
+# Metadata JSON - Render persistent disk ke liye
+METADATA_FILE = os.path.join(os.getenv('UPLOAD_FOLDER', ''), 'file_metadata.json') if os.getenv('UPLOAD_FOLDER') else 'file_metadata.json'
 
 # Admin Credentials
 ADMIN_USER = os.getenv('ADMIN_USER', 'admin')
@@ -52,6 +52,8 @@ def load_metadata():
 def save_metadata(metadata):
     """Save file metadata to JSON file"""
     try:
+        # Ensure directory exists
+        os.makedirs(os.path.dirname(METADATA_FILE) if os.path.dirname(METADATA_FILE) else '.', exist_ok=True)
         with open(METADATA_FILE, 'w') as f:
             json.dump(metadata, f, indent=2)
         print(f"✅ Metadata saved: {len(metadata)} files")
@@ -59,59 +61,22 @@ def save_metadata(metadata):
         print(f"❌ Error saving metadata: {e}")
 
 def get_all_files():
-    """Get all files from Cloudinary with metadata"""
+    """Get all files from metadata (fast and reliable)"""
     metadata = load_metadata()
     files_dict = {}
     
-    try:
-        print("🔄 Fetching files from Cloudinary...")
-        
-        # Cloudinary se sab files fetch karein
-        result = cloudinary.api.resources(
-            type='upload',
-            prefix='ahb_file_hub/',
-            max_results=100
-        )
-        
-        print(f"📁 Cloudinary response: {len(result.get('resources', []))} files found")
-        
-        for resource in result.get('resources', []):
-            public_id = resource.get('public_id')
-            # Extract file_id from public_id (remove 'ahb_file_hub/' prefix)
-            file_id = public_id.split('/')[-1] if '/' in public_id else public_id
-            
-            # Metadata se original filename lein
-            file_info = metadata.get(file_id, {})
-            
-            # File size format
-            bytes_size = resource.get('bytes', 0)
-            if bytes_size < 1024 * 1024:
-                size_str = f'{bytes_size / 1024:.1f} KB'
-            else:
-                size_str = f'{bytes_size / (1024 * 1024):.1f} MB'
-            
-            # Upload date from metadata or Cloudinary
-            upload_date = file_info.get('upload_date', '')
-            if not upload_date and resource.get('created_at'):
-                upload_date = resource.get('created_at')
-            
-            files_dict[file_id] = {
-                'filename': file_info.get('original_filename', f"{file_id}.{resource.get('format', 'file')}"),
-                'cloud_url': resource.get('secure_url'),
-                'public_id': public_id,
-                'size': size_str,
-                'upload_date': upload_date,
-                'format': resource.get('format', 'unknown'),
-                'bytes': bytes_size,
-            }
-            
-        print(f"✅ Total files loaded: {len(files_dict)}")
-        
-    except Exception as e:
-        print(f"❌ Error fetching from Cloudinary: {e}")
-        import traceback
-        traceback.print_exc()
+    for file_id, info in metadata.items():
+        files_dict[file_id] = {
+            'filename': info.get('original_filename', file_id),
+            'cloud_url': info.get('cloud_url', ''),
+            'public_id': info.get('public_id', file_id),
+            'size': info.get('size', 'Unknown'),
+            'upload_date': info.get('upload_date', ''),
+            'format': info.get('format', 'unknown'),
+            'bytes': info.get('bytes', 0),
+        }
     
+    print(f"📊 Total files from metadata: {len(files_dict)}")
     return files_dict
 
 def generate_unique_link(file_id):
@@ -186,7 +151,6 @@ def admin_panel():
             file = request.files['file']
             if file.filename != '':
                 try:
-                    # Generate unique ID
                     file_id = str(uuid.uuid4())[:8]
                     
                     print(f"📤 Uploading file: {file.filename}")
@@ -195,12 +159,20 @@ def admin_panel():
                     # Upload to Cloudinary
                     cloud_result = cloudinary.uploader.upload(
                         file,
-                        public_id=f"ahb_file_hub/{file_id}",
+                        public_id=file_id,
                         resource_type='auto'
                     )
                     
                     print(f"✅ Upload successful!")
                     print(f"🔗 Cloud URL: {cloud_result.get('secure_url')}")
+                    print(f"📌 Public ID: {cloud_result.get('public_id')}")
+                    
+                    # Get file size
+                    bytes_size = cloud_result.get('bytes', 0)
+                    if bytes_size < 1024 * 1024:
+                        size_str = f'{bytes_size / 1024:.1f} KB'
+                    else:
+                        size_str = f'{bytes_size / (1024 * 1024):.1f} MB'
                     
                     # Save metadata
                     metadata = load_metadata()
@@ -209,6 +181,9 @@ def admin_panel():
                         'cloud_url': cloud_result.get('secure_url', ''),
                         'public_id': cloud_result.get('public_id', ''),
                         'upload_date': datetime.now().isoformat(),
+                        'size': size_str,
+                        'bytes': bytes_size,
+                        'format': cloud_result.get('format', 'unknown'),
                     }
                     save_metadata(metadata)
                     
@@ -219,12 +194,12 @@ def admin_panel():
                 
                 return redirect(url_for('admin_panel'))
     
-    # Get all files from Cloudinary
     files_db = get_all_files()
     
-    # Generate links for each file
     for file_id in files_db:
         files_db[file_id]['link'] = generate_unique_link(file_id)
+    
+    print(f"📊 Sending {len(files_db)} files to template")
     
     return render_template('admin.html', files=files_db)
 
@@ -236,13 +211,13 @@ def delete_file(file_id):
     files_db = get_all_files()
     if file_id in files_db:
         try:
-            # Cloudinary se delete
+            # Delete from Cloudinary
             public_id = files_db[file_id].get('public_id')
             if public_id:
                 cloudinary.uploader.destroy(public_id)
                 print(f"🗑️ Deleted from Cloudinary: {public_id}")
             
-            # Metadata se delete
+            # Delete from metadata
             metadata = load_metadata()
             if file_id in metadata:
                 del metadata[file_id]
@@ -257,6 +232,11 @@ def delete_file(file_id):
 def logout():
     session.pop('admin_logged', None)
     return redirect(url_for('index'))
+
+@app.route('/health')
+def health_check():
+    """Health check endpoint for Render"""
+    return {'status': 'healthy', 'files': len(get_all_files())}
 
 @app.errorhandler(404)
 def not_found(error):
