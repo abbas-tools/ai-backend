@@ -1,24 +1,8 @@
-# Python
 __pycache__/
 *.pyc
-*.pyo
-*.pyd
-venv/
-env/
-ENV/
-
-# Uploads
-uploads/
-file_metadata.json
-
-# Environment variables
 .env
-.env.local
-
-# IDE
-.vscode/
-.idea/
+file_metadata.json
+uploads/
+venv/
 .DS_Store
-
-# Logs
 *.log
