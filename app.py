@@ -193,22 +193,27 @@ def delete_file(file_id):
         return redirect(url_for('admin_login'))
     
     files_db = get_all_files()
-    if file_id in files_db:
-        try:
-            public_id = files_db[file_id].get('public_id')
-            if public_id:
-                cloudinary.uploader.destroy(public_id)
-                print(f"🗑️ Deleted from Cloudinary: {public_id}")
+    try:
+        # Pehle database se exact public_id nikalne ki koshish karein
+        public_id = files_db.get(file_id, {}).get('public_id', file_id)
+        
+        print(f"🗑️ Deleting from Cloudinary - Public ID: {public_id}")
+        
+        # Raw resource type ke sath delete request bhejein
+        cloudinary.uploader.destroy(public_id, resource_type='raw', invalidate=True)
+        
+        # Backup ke tor par agar direct file_id se bhi ho sake
+        if public_id != file_id:
+            cloudinary.uploader.destroy(file_id, resource_type='raw', invalidate=True)
+            
+        print(f"✅ Successfully deleted {file_id}")
                 
-        except Exception as e:
-            print(f"❌ Error deleting file: {e}")
+    except Exception as e:
+        print(f"❌ Error deleting file: {e}")
+        import traceback
+        traceback.print_exc()
     
     return redirect(url_for('admin_panel'))
-
-@app.route('/logout')
-def logout():
-    session.pop('admin_logged', None)
-    return redirect(url_for('index'))
 
 @app.errorhandler(404)
 def not_found(error):
@@ -220,3 +225,4 @@ def internal_error(error):
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
+    
