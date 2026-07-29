@@ -38,12 +38,11 @@ ADMIN_PASS = 'KING56'
 # ==============================================
 
 def get_all_files():
-    """Get all files directly from Cloudinary API"""
+    """Get all files directly from Cloudinary API - NO METADATA"""
     files_dict = {}
     try:
         print("🔄 Fetching files from Cloudinary...")
         
-        # Cloudinary se sab files fetch karein
         result = cloudinary.api.resources(
             type='upload',
             max_results=100
@@ -56,14 +55,12 @@ def get_all_files():
             # Extract file_id from public_id
             file_id = public_id.split('/')[-1] if '/' in public_id else public_id
             
-            # File size format
             bytes_size = resource.get('bytes', 0)
             if bytes_size < 1024 * 1024:
                 size_str = f'{bytes_size / 1024:.1f} KB'
             else:
                 size_str = f'{bytes_size / (1024 * 1024):.1f} MB'
             
-            # Get format or extension
             file_format = resource.get('format', 'file')
             if not file_format:
                 file_format = 'file'
@@ -88,6 +85,7 @@ def get_all_files():
     return files_dict
 
 def generate_unique_link(file_id):
+    """Generate unique link for file"""
     return url_for('viewer_page', file_id=file_id, _external=True)
 
 def get_file_extension(filename):
@@ -163,7 +161,6 @@ def admin_panel():
                     print(f"📤 Uploading file: {file.filename}")
                     print(f"🆔 File ID: {file_id}")
                     
-                    # Upload to Cloudinary
                     cloud_result = cloudinary.uploader.upload(
                         file,
                         public_id=file_id,
@@ -173,8 +170,6 @@ def admin_panel():
                     print(f"✅ Upload successful!")
                     print(f"🔗 Cloud URL: {cloud_result.get('secure_url')}")
                     print(f"📌 Public ID: {cloud_result.get('public_id')}")
-                    
-                    # Metadata ab save nahi karte (Cloudinary direct fetch)
                     
                 except Exception as e:
                     print(f"❌ Upload Error: {e}")
@@ -201,7 +196,6 @@ def delete_file(file_id):
     files_db = get_all_files()
     if file_id in files_db:
         try:
-            # Delete from Cloudinary
             public_id = files_db[file_id].get('public_id')
             if public_id:
                 cloudinary.uploader.destroy(public_id)
