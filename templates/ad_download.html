@@ -44,15 +44,14 @@
 
         .icon { font-size: 36px; display: block; margin-bottom: 4px; }
         h2 { font-size: 20px; color: #f59e0b; margin-bottom: 6px; }
-        .subtitle { font-size: 13px; color: #94a3b8; margin-bottom: 20px; }
+        .subtitle { font-size: 13px; color: #94a3b8; margin-bottom: 15px; }
 
         .ad-box {
             background: rgba(0,0,0,0.2);
             border: 1px solid rgba(255,255,255,0.04);
             border-radius: 16px;
-            padding: 16px;
-            margin: 16px 0;
-            min-height: 80px;
+            padding: 12px;
+            margin: 12px 0;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -66,7 +65,7 @@
             letter-spacing: 1px;
             color: #94a3b8;
             opacity: 0.4;
-            margin-top: 6px;
+            margin-top: 4px;
             display: block;
         }
 
@@ -87,6 +86,7 @@
             background: linear-gradient(135deg, #10b981, #059669);
             box-shadow: 0 8px 0 #065f46, 0 12px 30px rgba(16,185,129,0.2);
             cursor: pointer;
+            margin-top: 10px;
         }
         .btn:hover { transform: translateY(-3px); box-shadow: 0 12px 0 #065f46, 0 20px 40px rgba(16,185,129,0.3); }
         .btn:active { transform: translateY(4px); box-shadow: 0 4px 0 #065f46, 0 8px 20px rgba(16,185,129,0.15); }
@@ -106,7 +106,7 @@
         }
 
         @media (max-width: 480px) {
-            .glass-card { padding: 24px 16px; border-radius: 20px; }
+            .glass-card { padding: 20px 14px; border-radius: 20px; }
         }
         @keyframes fadeInUp {
             from { opacity: 0; transform: translateY(30px); }
@@ -122,40 +122,55 @@
 
         <span class="icon">📢</span>
         <h2>Support Us</h2>
-        <p class="subtitle">Please view the advertisement below to support us</p>
+        <p class="subtitle">Please view the advertisements below to support us</p>
 
         <div class="file-name">📄 File: <strong>{{ file_info.filename }}</strong></div>
 
-        <!-- ===== REAL ADS IN SANDBOX IFRAME ===== -->
+        <!-- ===== BANNER AD 1 (300x250) inside Sandbox Iframe ===== -->
         <div class="ad-box">
             <iframe 
-                srcdoc="
-                    <!DOCTYPE html>
-                    <html>
-                    <head>
-                        <script>
-                            atOptions = {
-                                'key' : '03b4a64917d99a52eb71ea7bea6414d6',
-                                'format' : 'iframe',
-                                'height' : 50,
-                                'width' : 320,
-                                'params' : {}
-                            };
-                        </script>
-                        <script src='https://www.highperformanceformat.com/03b4a64917d99a52eb71ea7bea6414d6/invoke.js'></script>
-                    </head>
-                    <body style='margin:0;padding:0;background:transparent;display:flex;justify-content:center;align-items:center;'>
-                    </body>
-                    </html>
-                "
+                srcdoc="<!DOCTYPE html><html><head></head><body style='margin:0;padding:0;background:transparent;display:flex;justify-content:center;align-items:center;'>
+                <script>
+                    atOptions = {
+                        'key' : '66b634384630a2b082173552730d81a0',
+                        'format' : 'iframe',
+                        'height' : 250,
+                        'width' : 300,
+                        'params' : {}
+                    };
+                </script>
+                <script src='https://www.highperformanceformat.com/66b634384630a2b082173552730d81a0/invoke.js'></script>
+                </body></html>"
                 sandbox="allow-scripts allow-same-origin allow-forms"
                 loading="lazy"
-                style="width:100%; max-width:320px; height:60px; border:none; border-radius:8px; background:transparent;">
+                style="width:300px; height:250px; border:none; background:transparent;">
             </iframe>
             <span class="ad-label">📢 Advertisement</span>
         </div>
 
-        <p id="status-text" style="color: #10b981; font-weight: 600; margin: 10px 0;">✅ Ready to download!</p>
+        <!-- ===== BANNER AD 2 (320x50) inside Sandbox Iframe ===== -->
+        <div class="ad-box">
+            <iframe 
+                srcdoc="<!DOCTYPE html><html><head></head><body style='margin:0;padding:0;background:transparent;display:flex;justify-content:center;align-items:center;'>
+                <script>
+                    atOptions = {
+                        'key' : '03b4a64917d99a52eb71ea7bea6414d6',
+                        'format' : 'iframe',
+                        'height' : 50,
+                        'width' : 320,
+                        'params' : {}
+                    };
+                </script>
+                <script src='https://www.highperformanceformat.com/03b4a64917d99a52eb71ea7bea6414d6/invoke.js'></script>
+                </body></html>"
+                sandbox="allow-scripts allow-same-origin allow-forms"
+                loading="lazy"
+                style="width:320px; height:50px; border:none; background:transparent;">
+            </iframe>
+            <span class="ad-label">📢 Advertisement</span>
+        </div>
+
+        <p id="status-text" style="color: #10b981; font-weight: 600; margin: 8px 0; font-size: 13px;">✅ Ready to download!</p>
 
         <!-- Download Button -->
         <a href="javascript:void(0);" id="downloadBtn" class="btn">
@@ -168,8 +183,8 @@
     </div>
 
     <script>
-        // Yahan apna Smart Link / Direct Link paste karein
-        const smartLinkURL = "https://your-smart-link-url.com"; 
+        // Aapka real Smart Link URL
+        const smartLinkURL = "https://www.effectivecpmnetwork.com/xxzz1j2s?key=18168874abae8f6e106244faf40552cd"; 
         const actualDownloadURL = "{{ url_for('download_file', file_id=file_id) }}";
 
         let clickCount = 0;
@@ -181,11 +196,11 @@
             clickCount++;
 
             if (clickCount === 1) {
-                // First Click: Smart Link open karega naye tab mein
+                // First Click: Smart Link ko naye tab mein khol dega
                 window.open(smartLinkURL, '_blank');
                 statusText.innerText = "⚠️ Click one more time to start download!";
             } else if (clickCount >= 2) {
-                // Second Click: File download start kar dega
+                // Second Click: Asli file download shuru ho jayegi
                 statusText.innerText = "📥 Downloading started...";
                 window.location.href = actualDownloadURL;
             }
