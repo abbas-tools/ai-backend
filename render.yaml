@@ -9,7 +9,3 @@ services:
         value: 3.10.0
       - key: FLASK_SECRET_KEY
         generateValue: true
-    disk:
-      name: uploads
-      mountPath: /opt/render/project/src/uploads
-      sizeGB: 1
