@@ -38,13 +38,15 @@ ADMIN_PASS = 'KING56'
 # ==============================================
 
 def get_all_files():
-    """Get all files directly from Cloudinary API - NO METADATA"""
+    """Get all files directly from Cloudinary API - ALL TYPES"""
     files_dict = {}
     try:
         print("🔄 Fetching files from Cloudinary...")
         
+        # ALL resource types fetch karein (image, video, raw, auto)
         result = cloudinary.api.resources(
             type='upload',
+            resource_type='auto',  # <-- YEH LINE ADD KAREIN
             max_results=100
         )
         
@@ -52,7 +54,6 @@ def get_all_files():
         
         for resource in result.get('resources', []):
             public_id = resource.get('public_id')
-            # Extract file_id from public_id
             file_id = public_id.split('/')[-1] if '/' in public_id else public_id
             
             bytes_size = resource.get('bytes', 0)
@@ -164,7 +165,7 @@ def admin_panel():
                     cloud_result = cloudinary.uploader.upload(
                         file,
                         public_id=file_id,
-                        resource_type='auto'
+                        resource_type='auto'  # <-- Sab files allow
                     )
                     
                     print(f"✅ Upload successful!")
@@ -178,7 +179,6 @@ def admin_panel():
                 
                 return redirect(url_for('admin_panel'))
     
-    # Get all files directly from Cloudinary
     files_db = get_all_files()
     
     for file_id in files_db:
