@@ -1,1 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - File Not Found | AHB File Hub</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            padding: 20px;
+        }
+        .error-container {
+            background: white;
+            border-radius: 20px;
+            padding: 60px 50px;
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: slideIn 0.5s ease-out;
+        }
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .error-code {
+            font-size: 120px;
+            font-weight: 900;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+            margin-bottom: 10px;
+        }
+        .error-title {
+            font-size: 32px;
+            color: #2d3748;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+        .error-message {
+            font-size: 18px;
+            color: #718096;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        .error-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            display: block;
+        }
+        .btn-home {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 14px 40px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+        .btn-home:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
+        }
+        .btn-home:active {
+            transform: translateY(0);
+        }
+        .file-info {
+            background: #f7fafc;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px 0;
+            font-size: 14px;
+            color: #4a5568;
+        }
+        .file-info strong {
+            color: #2d3748;
+        }
+        .suggestions {
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 2px solid #e2e8f0;
+            text-align: left;
+        }
+        .suggestions h4 {
+            color: #2d3748;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        .suggestions ul {
+            list-style: none;
+            padding: 0;
+        }
+        .suggestions ul li {
+            color: #718096;
+            padding: 5px 0;
+            font-size: 14px;
+        }
+        .suggestions ul li:before {
+            content: "• ";
+            color: #667eea;
+            font-weight: bold;
+        }
+        @media (max-width: 480px) {
+            .error-container {
+                padding: 40px 25px;
+            }
+            .error-code {
+                font-size: 80px;
+            }
+            .error-title {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <span class="error-icon">🔍</span>
+        <div class="error-code">404</div>
+        <h1 class="error-title">File Not Found</h1>
+        <p class="error-message">
+            Oops! The file you're looking for doesn't exist or has been moved.
+            It might have been deleted or the link might be incorrect.
+        </p>
+        
+        <div class="file-info">
+            <strong>Requested File:</strong> <span id="requested-file">{{ request.path }}</span>
+        </div>
+        
+        <a href="{{ url_for('index') }}" class="btn-home">🏠 Back to Home</a>
+        
+        <div class="suggestions">
+            <h4>💡 What you can do:</h4>
+            <ul>
+                <li>Check if the file link is correct</li>
+                <li>The file might have been removed by the admin</li>
+                <li>Contact the person who shared this link</li>
+                <li>Go to homepage and browse available files</li>
+            </ul>
+        </div>
+    </div>
 
+    <script>
+        // Show requested file path
+        document.addEventListener('DOMContentLoaded', function() {
+            const pathSpan = document.getElementById('requested-file');
+            if (pathSpan) {
+                pathSpan.textContent = window.location.pathname;
+            }
+        });
+    </script>
+</body>
+</html>
